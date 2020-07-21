@@ -1,0 +1,16 @@
+import os
+env = Environment()  
+#env['LIBPREFIX'] = ""
+env.Append( CPPFLAGS='/EHsc /MD' )
+env.Append( CPPPATH=['C:/ThirdPartyPackages/VTK_8_2a_git_4ddba83b36ee9e556a248137fe4643fb/include/vtk-9.0', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtCore', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtGui', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtXml', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtWidgets', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtCharts', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtOpenGL', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtSvg', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtPrintSupport', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtXmlPatterns', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtNetwork', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtConcurrent', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtSql', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtTest', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtANGLE', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/include/QtUiTools'] )
+
+if ARGUMENTS.get('debug', 0):
+    env.Append(CPPDEFINES = ['DEBUG', '_DEBUG'])
+    env.Append(CCFLAGS=Split('/Zi /Fd${TARGET}.pdb'))
+    env.Append(LINKFLAGS = ['/DEBUG', '/NODEFAULTLIB:MSVCRTD'])
+else: 
+    env.Append(CPPDEFINES = ['NDEBUG'])
+    
+env.Append( LIBPATH=['C:/ThirdPartyPackages/VTK_8_2a_git_4ddba83b36ee9e556a248137fe4643fb/lib', 'C:/ThirdPartyPackages/Qt_5_12_0_0f57852071ef49f9055137df9da903df/lib'] )
+env.Append( LIBS=['vtkCommonExecutionModel-9.0', 'vtkCommonComputationalGeometry-9.0', 'vtkCommonColor-9.0', 'vtkCommonCore-9.0', 'vtkCommonDataModel-9.0', 'vtkCommonExecutionModel-9.0', 'vtkCommonMath-9.0', 'vtkCommonMisc-9.0', 'vtkCommonSystem-9.0', 'vtkCommonTransforms-9.0', 'vtkDomainsChemistry-9.0', 'vtkexpat-9.0', 'vtkFiltersAMR-9.0', 'vtkFiltersCore-9.0', 'vtkFiltersExtraction-9.0', 'vtkFiltersHybrid-9.0', 'vtkFiltersSources-9.0', 'vtkfreetype-9.0', 'vtkGeovisCore-9.0', 'vtkgl2ps-9.0', 'vtkInteractionStyle-9.0', 'vtkInteractionWidgets-9.0', 'vtkIOCore-9.0', 'vtkIOExport-9.0', 'vtkIOGeometry-9.0', 'vtkIOImport-9.0', 'vtkIOVideo-9.0', 'vtkloguru-9.0', 'vtkRenderingAnnotation-9.0', 'vtkRenderingCore-9.0', 'vtkRenderingFreeType-9.0', 'vtkRenderingImage-9.0', 'vtkRenderingOpenGL2-9.0', 'vtkRenderingVolume-9.0', 'vtkzlib-9.0', 'vtksys-9.0', 'kernel32', 'user32', 'Gdi32', 'UserEnv', 'advapi32', 'Shell32', 'libEGL', 'libGLESv2', 'Qt5UITools', 'Qt5Core', 'Qt5Gui', 'Qt5Xml', 'Qt5Widgets', 'Qt5Charts', 'Qt5OpenGL', 'Qt5Svg', 'Qt5PrintSupport', 'Qt5XmlPatterns', 'Qt5Network', 'Qt5Concurrent', 'Qt5Sql', 'Qt5Test'] )
+env.Program('VTK_8_2a_git_test', Glob('*.cpp') )        

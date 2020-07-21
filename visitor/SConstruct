@@ -1,0 +1,16 @@
+import os
+env = Environment()  
+#env['LIBPREFIX'] = ""
+env.Append( CPPFLAGS='/EHsc /MD' )
+env.Append( CPPPATH=[''] )
+
+if ARGUMENTS.get('debug', 0):
+    env.Append(CPPDEFINES = ['DEBUG', '_DEBUG'])
+    env.Append(CCFLAGS=Split('/Zi /Fd${TARGET}.pdb'))
+    env.Append(LINKFLAGS = ['/DEBUG', '/NODEFAULTLIB:MSVCRTD'])
+else: 
+    env.Append(CPPDEFINES = ['NDEBUG'])
+    
+env.Append( LIBPATH=[] )
+env.Append( LIBS=[] )
+env.Program('Visitor', Glob('*.cpp') )        
