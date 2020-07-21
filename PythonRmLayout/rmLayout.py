@@ -45,13 +45,16 @@ def char_range(c1, c2):
 class MainWindow(QWidget):
 
     def __init__(self):
+
         QWidget.__init__(self)
 
         self.layout= QVBoxLayout()
         self.setLayout(self.layout)
 
-        self.checkbox=QCheckBox("Layouts")
-        self.layout.addWidget(self.checkbox)
+        self.__comboBox__ = QComboBox()
+        self.__comboBox__.addItem("one")
+        self.__comboBox__.addItem("two")
+        self.layout.addWidget(self.__comboBox__)
 
         # --
 
@@ -61,9 +64,12 @@ class MainWindow(QWidget):
         self.vlayout1 = QVBoxLayout()
         self.widget1.setLayout(self.vlayout1)
 
+        self.hlayout =  QHBoxLayout()
         self.buttons1 = [QPushButton(str(x)) for x in range(5)]
         for i in self.buttons1:
-            self.vlayout1.addWidget(i)
+            self.hlayout.addWidget(i)
+
+        self.vlayout1.addLayout(self.hlayout)
 
         # --
 
@@ -79,18 +85,22 @@ class MainWindow(QWidget):
 
         # --
 
-        self.checkbox.toggled.connect(self.checkbox_toggled)
-        self.checkbox.toggle()
+        self.__comboBox__.currentIndexChanged.connect(self.combobox_toggled)
+        self.combobox_toggled(0)
 
         self.show()
 
-    def checkbox_toggled(self, state):
+    def combobox_toggled(self, index):
         # hide both not to loose space - we want the outer widget to be at the min possible size
         self.widget1.setVisible(False)
         self.widget2.setVisible(False)
 
-        self.widget1.setVisible(state)
-        self.widget2.setVisible(not state)
+        if index:
+            self.widget1.setVisible(True)
+        else:
+            self.widget2.setVisible(True)
+
+        self.adjustSize()
 
 app=QApplication([])
 mw=MainWindow()
