@@ -12,6 +12,8 @@ CMakeFiles
 *.tlog
 *.qm
 .vs
+.idea
+venv
 .github
 */Build/*
 */ALL_BUILD.*
