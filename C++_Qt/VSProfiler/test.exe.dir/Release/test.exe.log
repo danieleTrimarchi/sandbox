@@ -1,0 +1,6 @@
+﻿  Building Custom Rule C:/sandbox/VSProfiler/CMakeLists.txt
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.26.28805 for x64
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  cl /c /W1 /WX- /diagnostics:column /O2 /Ob2 /D WIN32 /D _WINDOWS /D NDEBUG /D test.exe /D "CMAKE_INTDIR=\"Release\"" /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /std:c++17 /Fo"test.exe.dir\Release\\" /Fd"test.exe.dir\Release\vc142.pdb" /Gd /TP /errorReport:prompt C:\sandbox\VSProfiler\test.cpp
+  test.cpp
+  test.exe.vcxproj -> C:\sandbox\VSProfiler\Release\test.exe.exe

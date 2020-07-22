@@ -1,0 +1,6 @@
+﻿  Building Custom Rule C:/sandbox/VSProfiler/CMakeLists.txt
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.26.28805 for x64
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D WIN32 /D _WINDOWS /D test.exe /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /std:c++17 /Fo"test.exe.dir\Debug\\" /Fd"test.exe.dir\Debug\vc142.pdb" /Gd /TP /errorReport:prompt C:\sandbox\VSProfiler\test.cpp
+  test.cpp
+  test.exe.vcxproj -> C:\sandbox\VSProfiler\Debug\test.exe.exe
