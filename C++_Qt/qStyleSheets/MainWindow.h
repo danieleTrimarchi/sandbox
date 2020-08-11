@@ -227,8 +227,11 @@ public:
     explicit TreeView(QWidget* parent = nullptr) :
         QTreeView(parent) {
 
+        // see https://stackoverflow.com/questions/23213929/qt-qlistwidget-item-with-alternating-colors
+        setAlternatingRowColors(true);
+
         // Get the data 
-        const QString& data("Item1\nItem2\nItem3"); 
+        const QString& data("Item1\nItem2\nItem3\Item4\nItem5"); 
 
         // Instanciate and assign a model 
         setModel(new TreeModel(data));

@@ -36,9 +36,21 @@ QDoubleSpinBox::up-button  { \
   right: 1px; \
   height: 24px; \
   width: 24px; \
-}	 \
-	");
+} \
+QTreeView { \
+background: #C2C3C3; \
+alternate-background-color: #8A8A8A; \
+} \
+");
 	
 	return testApp.exec();
 }
 
+/*
+\
+QTreeView::item:alternate { \
+  background-color: #bfffbf; \
+} \
+QTreeView::item { \
+  background-color: red; \
+} \*/
