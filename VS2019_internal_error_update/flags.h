@@ -9,7 +9,7 @@ struct FlagTraits {
 
 class Flags 
 {
-	enum { systemFlags_count = 12 };
+	enum { systemFlags_count = 1 };
 
 public:
 
