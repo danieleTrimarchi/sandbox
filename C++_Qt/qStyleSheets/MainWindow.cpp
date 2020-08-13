@@ -3,6 +3,7 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget* parent /*=nullptr*/) : 
 	QMainWindow(parent) {
@@ -15,7 +16,23 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 	pVLayout->addWidget( new QRadioButton("Search from the &cursor",this) );
 	pVLayout->addWidget( new QSpinBox(this) );
 	pVLayout->addWidget( new QDoubleSpinBox(this) );
-	pVLayout->addWidget(new TreeView(this));
+
+	pTreeview = new TreeView(this);
+	pVLayout->addWidget(pTreeview);
+
+	// -------------------------------------------
+	pFilterWidget = new FilterWidget;
+	pFilterWidget->setText(tr("foobar|dfj"));
+	connect(pFilterWidget, &FilterWidget::filterChanged, this, &MainWindow::textFilterChanged);
+
+	QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"));
+	filterPatternLabel->setBuddy(pFilterWidget);
+
+	QHBoxLayout* hLayout = new QHBoxLayout(this); 
+	hLayout->addWidget(filterPatternLabel);
+	hLayout->addWidget(pFilterWidget);
+	pVLayout->addLayout(hLayout);
+	// -------------------------------------------
 
 	centralWidget->setLayout(pVLayout);
 	

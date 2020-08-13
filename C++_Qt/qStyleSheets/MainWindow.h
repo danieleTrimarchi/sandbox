@@ -9,6 +9,102 @@
 #include <QAbstractItemModel>
 #include <QTreeView>
 #include <QSortFilterProxyModel>
+#include <QLineEdit>
+#include <QRegExp>
+#include <QActionGroup>
+#include <QMenu>
+#include <QToolButton>
+#include <QWidgetAction>
+#include <iostream>
+
+Q_DECLARE_METATYPE(QRegExp::PatternSyntax)
+
+// from: https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/itemviews/customsortfiltermodel/filterwidget.h?h=5.15
+class FilterWidget : public QLineEdit
+{
+    Q_OBJECT
+        Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity)
+        Q_PROPERTY(QRegExp::PatternSyntax patternSyntax READ patternSyntax WRITE setPatternSyntax)
+public:
+    explicit FilterWidget(QWidget* parent = nullptr) : QLineEdit(parent)
+        , m_patternGroup(new QActionGroup(this)) {
+
+        setClearButtonEnabled(true);
+        connect(this, &QLineEdit::textChanged, this, &FilterWidget::filterChanged);
+
+        QMenu* menu = new QMenu(this);
+        m_caseSensitivityAction = menu->addAction(tr("Case Sensitive"));
+        m_caseSensitivityAction->setCheckable(true);
+        connect(m_caseSensitivityAction, &QAction::toggled, this, &FilterWidget::filterChanged);
+
+        menu->addSeparator();
+        m_patternGroup->setExclusive(true);
+        QAction* patternAction = menu->addAction("Fixed String");
+        patternAction->setData(QVariant(int(QRegExp::FixedString)));
+        patternAction->setCheckable(true);
+        patternAction->setChecked(true);
+        m_patternGroup->addAction(patternAction);
+        patternAction = menu->addAction("Regular Expression");
+        patternAction->setCheckable(true);
+        patternAction->setData(QVariant(int(QRegExp::RegExp2)));
+        m_patternGroup->addAction(patternAction);
+        patternAction = menu->addAction("Wildcard");
+        patternAction->setCheckable(true);
+        patternAction->setData(QVariant(int(QRegExp::Wildcard)));
+        m_patternGroup->addAction(patternAction);
+        connect(m_patternGroup, &QActionGroup::triggered, this, &FilterWidget::filterChanged);
+
+        const QIcon icon = QIcon(QPixmap(":/images/find.png"));
+        QToolButton* optionsButton = new QToolButton;
+#ifndef QT_NO_CURSOR
+        optionsButton->setCursor(Qt::ArrowCursor);
+#endif
+        optionsButton->setFocusPolicy(Qt::NoFocus);
+        optionsButton->setStyleSheet("* { border: none; }");
+        optionsButton->setIcon(icon);
+        optionsButton->setMenu(menu);
+        optionsButton->setPopupMode(QToolButton::InstantPopup);
+
+        QWidgetAction* optionsAction = new QWidgetAction(this);
+        optionsAction->setDefaultWidget(optionsButton);
+        addAction(optionsAction, QLineEdit::LeadingPosition);
+    }
+
+    Qt::CaseSensitivity caseSensitivity() const {
+        return m_caseSensitivityAction->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive;
+    };
+
+    void setCaseSensitivity(Qt::CaseSensitivity cs) {
+        m_caseSensitivityAction->setChecked(cs == Qt::CaseSensitive);
+    };
+    
+    static inline QRegExp::PatternSyntax patternSyntaxFromAction(const QAction* a)
+    {
+        return static_cast<QRegExp::PatternSyntax>(a->data().toInt());
+    };
+
+    QRegExp::PatternSyntax patternSyntax() const {
+        return patternSyntaxFromAction(m_patternGroup->checkedAction());
+    };
+
+    void setPatternSyntax(QRegExp::PatternSyntax s) {
+        const QList<QAction*> actions = m_patternGroup->actions();
+        for (QAction* a : actions) {
+            if (patternSyntaxFromAction(a) == s) {
+                a->setChecked(true);
+                break;
+            }
+        }
+    };
+
+signals:
+    void filterChanged();
+
+private:
+    QAction* m_caseSensitivityAction;
+    QActionGroup* m_patternGroup;
+};
+
 
 class TreeItem
 {
@@ -73,6 +169,7 @@ private:
     TreeItem *m_parentItem;
 };
 
+
 class MySortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -91,12 +188,13 @@ protected:
         QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
         QModelIndex index2 = sourceModel()->index(sourceRow, 2, sourceParent);
 
-        return (sourceModel()->data(index0).toString().contains(QString("foo")));
+        return (sourceModel()->data(index0).toString().contains(filterRegExp()));
     }
 
 private:
 
 };
+
 
 class TreeModel : public QAbstractItemModel
 {
@@ -247,6 +345,7 @@ private:
     TreeItem *rootItem;
 };
 
+
 class TreeView : public QTreeView {
     Q_OBJECT
 public: 
@@ -256,17 +355,30 @@ public:
         // see https://stackoverflow.com/questions/23213929/qt-qlistwidget-item-with-alternating-colors
         setAlternatingRowColors(true);
 
-        // Instanciate and assign a model 
-        MySortFilterProxyModel* proxyModel = new MySortFilterProxyModel(this);
-
         // Get the data 
         const QString& data("Item1\nItemfoo2\nItem3\nItefoom4\nItem5");
+
+        // Instanciate a model 
         TreeModel* srcModel = new TreeModel(data);
+
+        // Instanciate a proxy model and feed it with the src model
+        proxyModel = new MySortFilterProxyModel(this);
         proxyModel->setSourceModel(srcModel); 
 
+        // Set the proxy model for this view
         setModel(proxyModel);
     };
+
+    MySortFilterProxyModel* getProxyModel() const {
+        return proxyModel;
+    };
+
+private: 
+
+    MySortFilterProxyModel* proxyModel; 
+
 };
+
 
 class MainWindow : public QMainWindow {
 	
@@ -281,7 +393,20 @@ class MainWindow : public QMainWindow {
 	~MainWindow();
 
 	private: 
-	
+        TreeView* pTreeview; 
+        FilterWidget* pFilterWidget; 
+
+private slots:
+
+    void textFilterChanged() {
+        std::cout << "text file changed: " << pFilterWidget->text().toStdString() << std::endl;
+
+        QRegExp regExp(pFilterWidget->text(),
+            pFilterWidget->caseSensitivity(),
+            pFilterWidget->patternSyntax());
+        pTreeview->getProxyModel()->setFilterRegExp(regExp);
+    }
+
 };
 
 #endif
