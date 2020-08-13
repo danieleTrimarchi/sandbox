@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 	pVLayout->addWidget( new QRadioButton("Search from the &cursor",this) );
 	pVLayout->addWidget( new QSpinBox(this) );
 	pVLayout->addWidget( new QDoubleSpinBox(this) );
-	pVLayout->addWidget( new TreeView(this) );
+	pVLayout->addWidget(new TreeView(this));
 
 	centralWidget->setLayout(pVLayout);
 	

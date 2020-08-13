@@ -2,11 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QString>
 #include <QVariant>
 #include <QVector>
 #include <QStringList>
 #include <QAbstractItemModel>
 #include <QTreeView>
+#include <QSortFilterProxyModel>
 
 class TreeItem
 {
@@ -71,6 +73,30 @@ private:
     TreeItem *m_parentItem;
 };
 
+class MySortFilterProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    MySortFilterProxyModel(QObject* parent = 0) :
+        QSortFilterProxyModel(parent)
+    {
+    }
+
+protected:
+
+    bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override {
+    
+        QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+        QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
+        QModelIndex index2 = sourceModel()->index(sourceRow, 2, sourceParent);
+
+        return (sourceModel()->data(index0).toString().contains(QString("foo")));
+    }
+
+private:
+
+};
 
 class TreeModel : public QAbstractItemModel
 {
@@ -230,11 +256,15 @@ public:
         // see https://stackoverflow.com/questions/23213929/qt-qlistwidget-item-with-alternating-colors
         setAlternatingRowColors(true);
 
-        // Get the data 
-        const QString& data("Item1\nItem2\nItem3\Item4\nItem5"); 
-
         // Instanciate and assign a model 
-        setModel(new TreeModel(data));
+        MySortFilterProxyModel* proxyModel = new MySortFilterProxyModel(this);
+
+        // Get the data 
+        const QString& data("Item1\nItemfoo2\nItem3\nItefoom4\nItem5");
+        TreeModel* srcModel = new TreeModel(data);
+        proxyModel->setSourceModel(srcModel); 
+
+        setModel(proxyModel);
     };
 };
 
