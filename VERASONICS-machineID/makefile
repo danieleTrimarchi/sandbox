@@ -12,20 +12,19 @@ G_NPD :=--no-print-directory
 # Define compiler 
 CC := gcc
 
-# Path naming conventions.
 # ------------------------
-G_PATH_SRC := src/
-G_PATH_BUILD := build/
 
 VANTAGE_HOME = "C:/prog/VERASONICS"
-INC := -I$(VANTAGE_HOME)/dev-libs/hal-lib/c-lib/src/includes \
+INC := \
+	-I$(VANTAGE_HOME)/dev-apps/c-hwdiag-app/src/includes \
+	-I$(VANTAGE_HOME)/dev-libs/hal-lib/c-lib/src/includes \
 	-I$(VANTAGE_HOME)/dev-libs/common-lib/c-common/src/includes \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/hal-lib \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/verasonics-common
 LIBPATH := -L$(VANTAGE_HOME)/build/artifacts/win64/win64
 LIBS := -lVerasonicsHal-NG
 
-CFLAGS = -lstdc++
+CFLAGS = -lstdc++ -fpermissive 
 
 OBJ = main.obj
 
