@@ -22,14 +22,16 @@ INC := -I$(VANTAGE_HOME)/dev-libs/hal-lib/c-lib/src/includes \
 	-I$(VANTAGE_HOME)/dev-libs/common-lib/c-common/src/includes \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/hal-lib \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/verasonics-common
+LIBPATH := -L$(VANTAGE_HOME)/build/artifacts/win64/win64
+LIBS := -lVerasonicsHal-NG
 
-CFLAGS = -lstdc++ $(INC)
+CFLAGS = -lstdc++
 
 OBJ = main.obj
 
 %.obj: %.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(INC)
 
 main: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS) $(INC) $(LIBPATH) $(LIBS)
 
