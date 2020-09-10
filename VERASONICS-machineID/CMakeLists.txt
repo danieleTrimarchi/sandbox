@@ -24,10 +24,12 @@ add_executable(${EXENAME} VANTAGE_SN.cpp)
 
 add_compile_definitions(${EXENAME})
 
-target_include_directories(${EXENAME} PRIVATE "D:/VERASONICS/vantageCloned-4.2.0-2001220500-srcs/dev-libs/hal-lib/c-lib/src/includes"
-"D:/VERASONICS/vantageCloned-4.2.0-2001220500-srcs/dev-libs/common-lib/c-common/src/includes"
-"D:/VERASONICS/vantageCloned-4.2.0-2001220500-srcs/build/artifacts/includes/hal-lib"
-"C:/sandbox/VERASONICS-machineID/pthreads-w32-2-9-1-release/pthreads.2")
+set(VANTAGE_HOME "C:/prog/VERASONICS") 
+
+target_include_directories(${EXENAME} PRIVATE 
+${VANTAGE_HOME}/dev-libs/hal-lib/c-lib/src/includes
+${VANTAGE_HOME}/dev-libs/common-lib/c-common/src/includes
+${VANTAGE_HOME}/build/artifacts/includes/hal-lib)
 
 target_link_directories(${EXENAME} PRIVATE "D:/VERASONICS/vantageCloned-4.2.0-2001220500-srcs/System")
 target_link_libraries(${EXENAME} "VerasonicsHal-NG")

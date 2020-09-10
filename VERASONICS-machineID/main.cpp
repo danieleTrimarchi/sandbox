@@ -2,7 +2,7 @@
 #include <VC_Threads.h>
 #include <VH_HardwarePrototypes.h>
 
-void main() {
+int main() {
 
 	std::cout<<"hello, world"<<std::endl;
     // VH_OpenHardware implemented in D:\VERASONICS\vantageCloned-4.2.0-2001220500-srcs\dev-libs\hal-lib\c-lib\src\VH_Hardware.c
@@ -11,5 +11,5 @@ void main() {
     enum VH_HardwareOpenResult hardwareOpenResult;
     hardwareOpenResult = VH_OpenHardware(FALSE); 
     
-    
+    return 0;
 }
