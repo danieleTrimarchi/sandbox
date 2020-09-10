@@ -8,6 +8,9 @@
 #include <parseArgs.h>
 #include <VH_HardwarePrototypes.h>
 
+/*---------------------------------------------------------------------------------------
+// This code comes from : VERASONICS\dev-apps\c-hwdiag-app
+// Actually it can be seriously simplified to simply return VH_BoardId::Vh_SHI
 char * BoardNames[] = {"TPC", "SHI", "BKP", "ACQ1", "ACQ2", "ACQ3", "ACQ4", "UTA", "ALL"};
 
 enum VH_BoardId getBoardFromName(const char *boardName)
@@ -28,7 +31,8 @@ enum VH_BoardId getBoardFromName(const char *boardName)
         }
     }
     return result;
-}
+}*/
+/*---------------------------------------------------------------------------------------*/
 
 int main() {
 
@@ -46,8 +50,10 @@ int main() {
 	switch(hardwareOpenResult){
 		case Vh_HardwareOpenResultSuccess :
 			std::cout<<"Hardware open Success!";
-			enum VH_BoardId boardId;
-			boardId = getBoardFromName("SHI");
+			enum VH_BoardId boardId = VH_BoardId::Vh_SHI;
+			
+			//todo: (this is matlab to be translated) 
+		//	brdStatus = Hardware.getBoardStatus(brdId);
 			
 			break;
 		
