@@ -1,61 +1,275 @@
 #include <iostream>
 #include <string>
 
-#include <VH_Hardware.h>
 #include <VC_Threads.h>
-
+#include <VH_Dma.h>
+#include <VH_DeviceDriver.h>
+#include <VH_Hardware.h>
+#include <VH_HardwareAdapterPrototypes.h>
+#include <VH_HardwarePrototypes.h>
 #include <VH_PciSwitchRegisters.h>
 #include <parseArgs.h>
-#include <VH_HardwarePrototypes.h>
-#include <getBoardStatus.h>
+#include <getEepromInfo.h>
+
+enum InfoType
+{
+    infoType_Generic,
+    infoType_Specific,
+    infoType_All,
+    infoType_Unknown
+};
+
+struct GetEepromInfoParams
+{
+    enum VH_BoardId m_BoardId;
+    enum InfoType m_InfoType;
+    VC_BOOL m_ShowLabels;
+};
+
+static struct GetEepromInfoParams g_GetEepromInfoParams;
+
+void performGetEepromInfo()
+{
+    enum VH_HardwareOpenResult hardwareOpenResult;
+    VC_BOOL isReady;
+    VC_BOOL success;
+    struct VH_EepromInfo eepromInfoBuffer;
+
+    hardwareOpenResult = VH_OpenHardware(FALSE);
+    if(hardwareOpenResult == Vh_HardwareOpenResultSuccess)
+    {
+        // Attempt to place the FPGAs in their runtime state
+        isReady = VH_IsHardwareReady();
+        if(!isReady)
+        {
+            // Attempt to open the hardware with a lock
+            hardwareOpenResult = VH_OpenHardware(TRUE);
+            if(hardwareOpenResult == Vh_HardwareOpenResultSuccess)
+            {
+                VH_LoadFpgaRuntime(FALSE, FALSE);
+            }
+        }
+
+        success = VH_GetEepromInfo(g_GetEepromInfoParams.m_BoardId, &eepromInfoBuffer);
+        if(success)
+        {
+            switch(g_GetEepromInfoParams.m_InfoType)
+            {
+                case infoType_Generic:
+                    printf("EEPROM Status:%s\n"
+                           "Name:%s\n"
+                           "Part #:%s\n"
+                           "Serial #:%s\n"
+                           "Manufacturer Date:%s\n"
+                           "Manufacturer Part #:%s\n",
+                           VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                           &eepromInfoBuffer.ei_ModuleName[0],
+                           &eepromInfoBuffer.ei_ModulePartNumber[0],
+                           &eepromInfoBuffer.ei_SerialNumber[0],
+                           &eepromInfoBuffer.ei_DateOfManufacture[0],
+                           &eepromInfoBuffer.ei_ManufacturedPartNumber[0]);
+                    break;
+
+                case infoType_Specific:
+                    switch(g_GetEepromInfoParams.m_BoardId)
+                    {
+                        case Vh_TPC:
+                            printf("EEPROM Status:%s\n"
+                                   "Profile 1-4 Index:%u\n"
+                                   "Profile 5 Index:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_TpcSpecificAttrMaxProfile1to4Index],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_TpcSpecificAttrMaxProfile5Index]);
+                            break;
+                        case Vh_SHI:
+                          printf("EEPROM Status:%s\n"
+                   "Connector Style Index:%u\n"
+                   "Connector Count:%u\n",
+                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_ShiSpecificAttrConnectorStyleIndex],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_ShiSpecificAttrConnectorCount]);
+              break;
+                        case Vh_UTA:
+                            printf("EEPROM Status:%s\n"
+                                   "Connector Style Index:%u\n"
+                                   "Connector Count:%u\n"
+                                 "Special Features:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_UtaSpecificAttrConnectorStyleIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_UtaSpecificAttrConnectorCount],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_UtaSpecificAttrSpecialFeatures]);
+                            break;
+                        case Vh_BKP:
+                            printf("EEPROM Status:%s\n"
+                                   "Max Profile 1-4 Index:%u\n"
+                                   "Max Profile 5 Index:%u\n"
+                                   "HIFU Cap Index:%u\n"
+                                 "HIFU Amperage Limit Index:%u\n"
+                                 "Is IIc Supported:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrMaxProfile1to4Index],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrMaxProfile5Index],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrHifuCapacitorIndex],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrHifuAmperageIndex],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrIsIicSupported]);
+                            break;
+                        case Vh_ACQ1:
+                        case Vh_ACQ2:
+                        case Vh_ACQ3:
+                        case Vh_ACQ4:
+                            printf("EEPROM Status:%s\n"
+                                   "Max Tx Voltage Index:%u\n"
+                                   "Profile 5 Supported:%u\n"
+                                   "Tx Circuit Index:%u\n"
+                                   "Rx Circuit Index:%u\n"
+                                   "Gate Driver Supply Index:%u\n"
+                                   "Transceiver Thermal Index:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrMaxTransmitVoltageIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrIsProfile5Supported],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrTransmitCircuitIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrReceiveCircuitIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrGateDriverSupplyCurrentIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrTransceiverThermalIndex]);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case infoType_All:
+                    switch(g_GetEepromInfoParams.m_BoardId)
+                    {
+                        case Vh_TPC:
+                            printf("EEPROM Status:%s\n"
+                                   "Name:%s\n"
+                                   "Part #:%s\n"
+                                   "Serial #:%s\n"
+                                   "Manufacturer Date:%s\n"
+                                   "Manufacturer Part #:%s\n"
+                                   "Profile 1-4 Index:%u\n"
+                                   "Profile 5 Index:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   &eepromInfoBuffer.ei_ModuleName[0],
+                                   &eepromInfoBuffer.ei_ModulePartNumber[0],
+                                   &eepromInfoBuffer.ei_SerialNumber[0],
+                                   &eepromInfoBuffer.ei_DateOfManufacture[0],
+                                   &eepromInfoBuffer.ei_ManufacturedPartNumber[0],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_TpcSpecificAttrMaxProfile1to4Index],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_TpcSpecificAttrMaxProfile5Index]);
+                            break;
+                        case Vh_SHI:
+                          printf("EEPROM Status:%s\n"
+                   "Name:%s\n"
+                   "Part #:%s\n"
+                   "Serial #:%s\n"
+                   "Manufacturer Date:%s\n"
+                   "Manufacturer Part #:%s\n"
+                   "Connector Style Index:%u\n"
+                   "Connector Count:%u\n",
+                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                   &eepromInfoBuffer.ei_ModuleName[0],
+                   &eepromInfoBuffer.ei_ModulePartNumber[0],
+                   &eepromInfoBuffer.ei_SerialNumber[0],
+                   &eepromInfoBuffer.ei_DateOfManufacture[0],
+                   &eepromInfoBuffer.ei_ManufacturedPartNumber[0],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_ShiSpecificAttrConnectorStyleIndex],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_ShiSpecificAttrConnectorCount]);
+                          break;
+                        case Vh_UTA:
+                            printf("EEPROM Status:%s\n"
+                                   "Name:%s\n"
+                                   "Part #:%s\n"
+                                   "Serial #:%s\n"
+                                   "Manufacturer Date:%s\n"
+                                   "Manufacturer Part #:%s\n"
+                                   "Connector Style Index:%u\n"
+                                   "Connector Count:%u\n"
+                                 "Special Features:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   &eepromInfoBuffer.ei_ModuleName[0],
+                                   &eepromInfoBuffer.ei_ModulePartNumber[0],
+                                   &eepromInfoBuffer.ei_SerialNumber[0],
+                                   &eepromInfoBuffer.ei_DateOfManufacture[0],
+                                   &eepromInfoBuffer.ei_ManufacturedPartNumber[0],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_UtaSpecificAttrConnectorStyleIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_UtaSpecificAttrConnectorCount],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_UtaSpecificAttrSpecialFeatures]);
+                            break;
+                        case Vh_BKP:
+                            printf("EEPROM Status:%s\n"
+                                   "Name:%s\n"
+                                   "Part #:%s\n"
+                                   "Serial #:%s\n"
+                                   "Manufacturer Date:%s\n"
+                                   "Manufacturer Part #:%s\n"
+                                   "Max Profile 1-4 Index:%u\n"
+                                   "Max Profile 5 Index:%u\n"
+                                   "HIFU Cap Index:%u\n"
+                                 "HIFU Amperage Limit Index:%u\n"
+                   "Is IIc Supported:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   &eepromInfoBuffer.ei_ModuleName[0],
+                                   &eepromInfoBuffer.ei_ModulePartNumber[0],
+                                   &eepromInfoBuffer.ei_SerialNumber[0],
+                                   &eepromInfoBuffer.ei_DateOfManufacture[0],
+                                   &eepromInfoBuffer.ei_ManufacturedPartNumber[0],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrMaxProfile1to4Index],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrMaxProfile5Index],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrHifuCapacitorIndex],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrHifuAmperageIndex],
+                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_BkpSpecificAttrIsIicSupported]);
+                            break;
+                        case Vh_ACQ1:
+                        case Vh_ACQ2:
+                        case Vh_ACQ3:
+                        case Vh_ACQ4:
+                            printf("EEPROM Status:%s\n"
+                                   "Name:%s\n"
+                                   "Part #:%s\n"
+                                   "Serial #:%s\n"
+                                   "Manufacturer Date:%s\n"
+                                   "Manufacturer Part #:%s\n"
+                                   "Max Tx Voltage Index:%u\n"
+                                   "Profile 5 Supported:%u\n"
+                                   "Tx Circuit Index:%u\n"
+                                   "Rx Circuit Index:%u\n"
+                                   "Gate Driver Supply Index:%u\n"
+                                   "Transceiver Thermal Index:%u\n",
+                                   VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
+                                   &eepromInfoBuffer.ei_ModuleName[0],
+                                   &eepromInfoBuffer.ei_ModulePartNumber[0],
+                                   &eepromInfoBuffer.ei_SerialNumber[0],
+                                   &eepromInfoBuffer.ei_DateOfManufacture[0],
+                                   &eepromInfoBuffer.ei_ManufacturedPartNumber[0],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrMaxTransmitVoltageIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrIsProfile5Supported],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrTransmitCircuitIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrReceiveCircuitIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrGateDriverSupplyCurrentIndex],
+                                   eepromInfoBuffer.ei_BoardSpecificValue[Vh_AcqSpecificAttrTransceiverThermalIndex]);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        VH_CloseHardware();
+    }
+    else
+    {
+        printf(APP_NAME " " GET_EEPROM_INFO_NAME " Error - Failed to open hardware because:%s\n", VH_GetHardwareOpenResultAsString(hardwareOpenResult));
+    }
+}
 
 int main() {
 
 	std::cout<<"hello, world"<<std::endl;
-    // VH_OpenHardware implemented in D:\VERASONICS\vantageCloned-4.2.0-2001220500-srcs\dev-libs\hal-lib\c-lib\src\VH_Hardware.c
-    // it lives in HAL-NG 'C' Shared Library." : System/libVerasonicsHal-NG.dll
-    //                                           System/   VerasonicsHal-NG.lib
-    enum VH_HardwareOpenResult hardwareOpenResult;
-    hardwareOpenResult = VH_OpenHardware(FALSE);  // false means read-only, we are only doing queries
-		
-	// Generate our status string
-	std::string status( VH_GetHardwareOpenResultAsString(hardwareOpenResult) );
-	std::cout << "VERASONICS HARDWARE OPEN STATUS: \n\t" << status << std::endl;
+    performGetEepromInfo(); 
 	
-    if(hardwareOpenResult == Vh_HardwareOpenResultSuccess) {
-
-		std::cout<<"Hardware open Success!";
-		
-		// This comes from : getBoardStatus.c :: performGetBoardStatus
-		enum VH_BoardStatus boardStatus;
-		boardStatus = VH_GetBoardStatus(VH_BoardId::Vh_SHI);
-			
- 		printf("%s Status:%s\n",
-           VH_GetBoardIdAsAbbrString(VH_BoardId::Vh_SHI),
-           VH_GetBoardStatusAsString(boardStatus));
-
-		if( VH_IsBoardDetected(VH_BoardId::Vh_SHI) || 
-			VH_IsBoardReady(VH_BoardId::Vh_SHI)  || 
-			VH_IsBoardReadyAndCalibrated(VH_BoardId::Vh_SHI) ) {
-			
-/* 				chipStatus =  Hardware.getChipStatus(brdId, ChipId.eeprom);
-				eepromInfo = Hardware.getEepromInfo(brdId);
-				SN_verasonic = char(eepromInfo.serialNumber);
- */			
-				status = VH_GetChipStatus(VH_BoardId::Vh_SHI, Vh_ChipEeprom);
-				VC_BOOL result = VH_GetEepromInfo(VH_BoardId::Vh_SHI, NULL);
-
-			}
-
-		VH_CloseHardware();
-
-	} else { 
-
-		// This comes from : getBoardStatus.c :: performGetBoardStatus
-         printf(APP_NAME " " GET_BOARD_STATUS_NAME " Error - Failed to open hardware because:%s\n", VH_GetHardwareOpenResultAsString(hardwareOpenResult));
-
-	}
-
 	return 0;
 }
 
