@@ -26,7 +26,9 @@ LIBS := -lVerasonicsHal-NG
 
 CFLAGS = -lstdc++ -fpermissive 
 
-OBJ = main.obj
+OBJ = main.obj VeraAPI.obj
+
+all: main
 
 %.obj: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) $(INC)
