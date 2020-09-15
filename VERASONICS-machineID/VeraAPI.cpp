@@ -2,9 +2,6 @@
 #include "VeraAPI.h"
 
   #include <iostream>
-
-extern "C"
-{
   #include <VC_Threads.h>
   #include <VH_Dma.h>
   #include <VH_DeviceDriver.h>
@@ -269,5 +266,3 @@ extern "C"
       }
 
   }
-
-} // End extern "C"

@@ -32,7 +32,7 @@ target_link_directories(${EXENAME} PRIVATE
 )
 
 target_link_libraries(${EXENAME} 
-	libVeraApi
+	libVeraApi_dll
 	VerasonicsCommon
 	VerasonicsHal-NG
 )

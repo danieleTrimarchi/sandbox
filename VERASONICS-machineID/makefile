@@ -23,27 +23,27 @@ INC := \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/hal-lib \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/verasonics-common
 LIBPATH := -L$(VANTAGE_HOME)/build/artifacts/win64/win64 -L.
-LIBS := -lVerasonicsHal-NG
+LIBS := -lVerasonicsHal-NG -lstdc++
 
 CFLAGS = -lstdc++ -fpermissive 
+CPPDEFINES = -DBUILDING_EXAMPLE_DLL
 
 OBJ = main.obj VeraAPI.obj
 LIB_OBJ = VeraAPI.obj
 
 OUTEXE_NAME= main
-OUTLIB_NAME= libVeraApi
+OUTDLL_NAME= libVeraApi
 
-all: $(OUTLIB_NAME) $(OUTEXE_NAME)
+all: $(OUTDLL_NAME)  $(OUTEXE_NAME)
 
 %.obj: %.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) $(INC)
+	$(CC) -c -o $@ $< $(CFLAGS) $(CPPDEFINES) $(INC)
 
 $(OUTEXE_NAME): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(INC) $(LIBPATH) $(LIBS) -llibVeraApi
 
-$(OUTLIB_NAME) : $(LIB_OBJ)
-	ar rc $(OUTLIB_NAME).lib $+
-	ranlib $(OUTLIB_NAME).lib
+$(OUTDLL_NAME) : $(LIB_OBJ)
+	$(CC) -shared -o $(OUTDLL_NAME).dll $+ $(LIBPATH) $(LIBS) -Wl,--out-implib,$(OUTDLL_NAME)_dll.lib
 
 clean:
-	rm -f main *.obj *.a *.lib  #This way is cleaner than your clean
+	rm -f main *.obj *.a *.lib *.dll  #This way is cleaner than your clean
