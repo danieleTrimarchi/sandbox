@@ -11,6 +11,7 @@ G_NPD :=--no-print-directory
 
 # Define compiler 
 CC := gcc
+AR := ar
 
 # ------------------------
 
@@ -21,18 +22,28 @@ INC := \
 	-I$(VANTAGE_HOME)/dev-libs/common-lib/c-common/src/includes \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/hal-lib \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/verasonics-common
-LIBPATH := -L$(VANTAGE_HOME)/build/artifacts/win64/win64
+LIBPATH := -L$(VANTAGE_HOME)/build/artifacts/win64/win64 -L.
 LIBS := -lVerasonicsHal-NG
 
 CFLAGS = -lstdc++ -fpermissive 
 
 OBJ = main.obj VeraAPI.obj
+LIB_OBJ = VeraAPI.obj
 
-all: main
+OUTEXE_NAME= main
+OUTLIB_NAME= libVeraApi
+
+all: $(OUTLIB_NAME) $(OUTEXE_NAME)
 
 %.obj: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) $(INC)
 
-main: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(INC) $(LIBPATH) $(LIBS)
+$(OUTEXE_NAME): $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(INC) $(LIBPATH) $(LIBS) -llibVeraApi
 
+$(OUTLIB_NAME) : $(LIB_OBJ)
+	ar rc $(OUTLIB_NAME).lib $+
+	ranlib $(OUTLIB_NAME).lib
+
+clean:
+	rm -f main *.obj *.a *.lib  #This way is cleaner than your clean

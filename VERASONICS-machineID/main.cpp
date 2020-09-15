@@ -3,8 +3,7 @@
 
 int main() {
 
-  VeraAPI api;
-  api.performGetEepromInfo(); 
+  performGetEepromInfo(); 
 	
 	return 0;
 }

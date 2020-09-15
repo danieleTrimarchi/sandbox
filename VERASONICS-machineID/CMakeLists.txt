@@ -20,19 +20,22 @@ project(VANTAGE_SN LANGUAGES CXX)
 
 set(EXENAME "VantageSN" CACHE PATH "Path to Cascade libraries")
 
-add_executable(${EXENAME} VANTAGE_SN.cpp)
+add_executable(${EXENAME} main.cpp)
 
 add_compile_definitions(${EXENAME})
 
-set(VANTAGE_HOME "C:/prog/VERASONICS") 
+target_include_directories(${EXENAME} PRIVATE C:/sandbox/VERASONICS-machineID )
 
-target_include_directories(${EXENAME} PRIVATE 
-${VANTAGE_HOME}/dev-libs/hal-lib/c-lib/src/includes
-${VANTAGE_HOME}/dev-libs/common-lib/c-common/src/includes
-${VANTAGE_HOME}/build/artifacts/includes/hal-lib)
+target_link_directories(${EXENAME} PRIVATE 
+	.
+	C:/prog/VERASONICS/build/artifacts/win64/win64
+)
 
-target_link_directories(${EXENAME} PRIVATE "D:/VERASONICS/vantageCloned-4.2.0-2001220500-srcs/System")
-target_link_libraries(${EXENAME} "VerasonicsHal-NG")
+target_link_libraries(${EXENAME} 
+	libVeraApi
+	VerasonicsCommon
+	VerasonicsHal-NG
+)
 
 # Request that particles be built with -std=c++17
 # target_compile_features(BeamformerCuda8_Algo_1  PUBLIC cxx_std_17)
