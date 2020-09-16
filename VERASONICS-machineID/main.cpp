@@ -1,10 +1,10 @@
 #include <iostream>
-#include "VeraAPI.h"
-//#include "VeraAPI.hpp"
+//#include "VeraAPI.h"
+#include "VeraAPI.hpp"
 
 int main() {
 
-	struct apiStruct* api = createAPIStruct(); 
+	/*struct apiStruct* api = createAPIStruct(); 
 	initApi result = initVerasonicsAPI(api);
 
 	if(result==initApi::succeed) {
@@ -22,15 +22,13 @@ int main() {
 
 	endVerasonicsAPI();
 	deleteApiStruct(api);
-
-	/*
+*/
 	try {
 		VeraSonics::VeraAPI api; 
 		std::cout << api.getMachineSN() << std::endl; 
 	} catch (std::exception& e){
 		std::cout<< e.what() << std::endl;
 	} 
-*/
 
 	return 0;
 }

@@ -19,17 +19,17 @@ enum initApi {
 	failed
 };
 
-struct apiStruct* DLLSPEC createAPIStruct();
-void DLLSPEC deleteApiStruct(struct apiStruct*);
+DLLSPEC struct apiStruct*  createAPIStruct();
+DLLSPEC void  deleteApiStruct(struct apiStruct*);
 
-initApi DLLSPEC initVerasonicsAPI(struct apiStruct*); 
-void DLLSPEC endVerasonicsAPI(); 
+DLLSPEC initApi  initVerasonicsAPI(struct apiStruct*); 
+DLLSPEC void  endVerasonicsAPI(); 
 
-const char* DLLSPEC getLastError(struct apiStruct*);
+DLLSPEC const char*  getLastError(struct apiStruct*);
 
-//void DLLSPEC performGetEepromInfo(); 
+DLLSPEC //void  performGetEepromInfo(); 
 
-const char* DLLSPEC getMachineSN(struct apiStruct*);
+DLLSPEC const char*  getMachineSN(struct apiStruct*);
 
 
 #ifdef __cplusplus
