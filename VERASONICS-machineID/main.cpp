@@ -3,8 +3,15 @@
 
 int main() {
 
-  performGetEepromInfo(); 
-	
+	struct apiStruct* api = initVerasonicsAPI();
+
+  	if(getLastError(api) == nullptr)
+	  	std::cout << "Returned machine id: " << getMachineSN(api) << std::endl; 
+	else
+		std::cout << "\nERROR= " << getLastError(api) << std::endl;
+
+	endVerasonicsAPI(api);
+
 	return 0;
 }
 

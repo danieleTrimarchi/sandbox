@@ -10,7 +10,7 @@ G_AT :=@
 G_NPD :=--no-print-directory
 
 # Define compiler 
-CC := gcc
+CC := g++
 AR := ar
 
 # ------------------------
