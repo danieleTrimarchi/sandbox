@@ -25,8 +25,8 @@ enum class InfoType
 
 struct GetEepromInfoParams
 {
-    VH_BoardId m_BoardId = Vh_BrdNone;
-    InfoType m_InfoType = InfoType::infoType_Unknown;
+    VH_BoardId m_BoardId = Vh_SHI;
+    InfoType m_InfoType = InfoType::infoType_Specific;
     VC_BOOL m_ShowLabels = FALSE;    
 };
 
@@ -70,6 +70,9 @@ initApi initVerasonicsAPI(struct apiStruct* api) {
               return initApi::succeed;
           }
       }
+      else 
+        return initApi::succeed;
+
     }
     
     api->lastError = 
@@ -302,14 +305,21 @@ void endVerasonicsAPI() {
 
 const char* getMachineSN(struct apiStruct* api) {
 
-    if(api ==  nullptr)
+
+    if(api ==  nullptr){
+        throw std::runtime_error("NO API in getMachineSN");
         return nullptr;
+    }
 
     struct VH_EepromInfo eepromInfoBuffer;
-    if (VH_GetEepromInfo(api->getEepromInfoParams.m_BoardId, &eepromInfoBuffer)){
+    VC_BOOL success = VH_GetEepromInfo(api->getEepromInfoParams.m_BoardId, &eepromInfoBuffer);
+    if (success){
         api->serialNumber = eepromInfoBuffer.ei_SerialNumber;
         return api->serialNumber.c_str(); 
     }
-    
+    else  {
+        throw std::runtime_error("NO success in getMachineSN");
+    }
+
     return nullptr;
 }

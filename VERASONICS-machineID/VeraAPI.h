@@ -22,12 +22,12 @@ enum initApi {
 DLLSPEC struct apiStruct*  createAPIStruct();
 DLLSPEC void  deleteApiStruct(struct apiStruct*);
 
-DLLSPEC initApi  initVerasonicsAPI(struct apiStruct*); 
-DLLSPEC void  endVerasonicsAPI(); 
+DLLSPEC initApi initVerasonicsAPI(struct apiStruct*); 
+DLLSPEC void endVerasonicsAPI(); 
 
 DLLSPEC const char*  getLastError(struct apiStruct*);
 
-DLLSPEC //void  performGetEepromInfo(); 
+//DLLSPEC void  performGetEepromInfo(); 
 
 DLLSPEC const char*  getMachineSN(struct apiStruct*);
 
