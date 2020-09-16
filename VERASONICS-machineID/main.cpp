@@ -1,16 +1,36 @@
 #include <iostream>
-# include "VeraAPI.h"
+#include "VeraAPI.h"
+//#include "VeraAPI.hpp"
 
 int main() {
 
-	struct apiStruct* api = initVerasonicsAPI();
+	struct apiStruct* api = createAPIStruct(); 
+	initApi result = initVerasonicsAPI(api);
 
-  	if(getLastError(api) == nullptr)
-	  	std::cout << "Returned machine id: " << getMachineSN(api) << std::endl; 
-	else
-		std::cout << "\nERROR= " << getLastError(api) << std::endl;
+	if(result==initApi::succeed) {
+	
+		const char* machineSN = getMachineSN(api);
+		if(machineSN==nullptr)
+			std::cout << "\nERROR= " << getLastError(api) << std::endl;
+  		else
+  			std::cout << "Returned machine id: " << machineSN << std::endl; 
+	
+	} else {
+  			std::cout << "The Verasonics API could not be initialised: \n" << 
+  			getLastError(api) << std::endl; 		
+	}
 
-	endVerasonicsAPI(api);
+	endVerasonicsAPI();
+	deleteApiStruct(api);
+
+	/*
+	try {
+		VeraSonics::VeraAPI api; 
+		std::cout << api.getMachineSN() << std::endl; 
+	} catch (std::exception& e){
+		std::cout<< e.what() << std::endl;
+	} 
+*/
 
 	return 0;
 }

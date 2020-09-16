@@ -50,14 +50,10 @@ void deleteApiStruct(struct apiStruct* api) {
 
 const char* getLastError(struct apiStruct* api) {
 
-    if(api->lastError.empty())
-        return nullptr;
     return api->lastError.c_str();
 }
 
-struct apiStruct* initVerasonicsAPI() {
-
-    struct apiStruct* api = createAPIStruct();
+initApi initVerasonicsAPI(struct apiStruct* api) {
 
   api->hardwareOpenResult = VH_OpenHardware(FALSE);
 
@@ -71,7 +67,7 @@ struct apiStruct* initVerasonicsAPI() {
           if(api->hardwareOpenResult == Vh_HardwareOpenResultSuccess)
           {
               VH_LoadFpgaRuntime(FALSE, FALSE);
-              return api;
+              return initApi::succeed;
           }
       }
     }
@@ -80,14 +76,14 @@ struct apiStruct* initVerasonicsAPI() {
         std::string(APP_NAME) + 
         " " GET_EEPROM_INFO_NAME " Error - Failed to open hardware because:\n" 
         + VH_GetHardwareOpenResultAsString(api->hardwareOpenResult) + "\n";
-    return api; 
+
+    return initApi::failed;
 }
 
 
-void endVerasonicsAPI(struct apiStruct* api) {
+void endVerasonicsAPI() {
 
   VH_CloseHardware();
-  deleteApiStruct(api);
 
 }
 

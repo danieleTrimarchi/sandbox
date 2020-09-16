@@ -14,15 +14,22 @@ extern "C" {
 
 struct apiStruct;
 
-//struct apiStruct* DLLSPEC initVerasonicsAPI(); 
-struct apiStruct* DLLSPEC initVerasonicsAPI(); 
-void DLLSPEC endVerasonicsAPI(struct apiStruct*); 
+enum initApi {
+	succeed,
+	failed
+};
 
-const char* DLLSPEC getLastError(struct apiStruct* apistruct);
+struct apiStruct* DLLSPEC createAPIStruct();
+void DLLSPEC deleteApiStruct(struct apiStruct*);
+
+initApi DLLSPEC initVerasonicsAPI(struct apiStruct*); 
+void DLLSPEC endVerasonicsAPI(); 
+
+const char* DLLSPEC getLastError(struct apiStruct*);
 
 //void DLLSPEC performGetEepromInfo(); 
 
-const char* DLLSPEC getMachineSN(struct apiStruct* apistruct);
+const char* DLLSPEC getMachineSN(struct apiStruct*);
 
 
 #ifdef __cplusplus
