@@ -43,7 +43,7 @@ $(OUTEXE_NAME): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(INC) $(LIBPATH) $(LIBS) -llibVeraApi
 
 $(OUTDLL_NAME) : $(LIB_OBJ)
-	$(CC) -shared -o $(OUTDLL_NAME).dll $+ $(LIBPATH) $(LIBS) -Wl,--out-implib,$(OUTDLL_NAME)_dll.lib
+	$(CC) -shared -o $(OUTDLL_NAME).dll $+ $(LIBPATH) $(LIBS) -Wl,--out-implib,$(OUTDLL_NAME).lib
 
 clean:
 	rm -f main *.obj *.a *.lib *.dll  #This way is cleaner than your clean
