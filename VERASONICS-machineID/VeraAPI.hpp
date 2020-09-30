@@ -20,7 +20,7 @@ namespace VeraSonics {
 			}
 
 			~VeraAPI() {
-				::endVerasonicsAPI();
+				::endVerasonicsAPI(api);
 				::deleteApiStruct(api);
 			}
 

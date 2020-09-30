@@ -23,7 +23,7 @@ INC := \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/hal-lib \
 	-I$(VANTAGE_HOME)/build/artifacts/includes/verasonics-common
 LIBPATH := -L$(VANTAGE_HOME)/build/artifacts/win64/win64 -L.
-LIBS := -lVerasonicsHal-NG -lstdc++
+LIBS := -lstdc++
 
 CFLAGS = -lstdc++ -fpermissive 
 CPPDEFINES = -DBUILDING_EXAMPLE_DLL

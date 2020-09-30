@@ -15,6 +15,8 @@
 #include <parseArgs.h>
 #include <getEepromInfo.h>
 
+#include <Windows.h>
+
 enum class InfoType
 {
     infoType_Generic,
@@ -32,6 +34,7 @@ struct GetEepromInfoParams
 
 
 struct apiStruct {
+  HINSTANCE hDLL;               // Handle to DLL
   VH_HardwareOpenResult hardwareOpenResult = Vh_HardwareOpenResultSuccess;
   GetEepromInfoParams getEepromInfoParams ={};
   std::string lastError; 
@@ -53,42 +56,94 @@ const char* getLastError(struct apiStruct* api) {
     return api->lastError.c_str();
 }
 
+typedef enum VH_HardwareOpenResult(VH_CALL* PFN_VH_OpenHardware)(VC_BOOL);
+typedef VC_BOOL (VH_CALL* PFN_VH_IsHardwareReady)();
+typedef enum VH_HardwareResult (VH_CALL* PFN_VH_LoadFpgaRuntime)(VC_BOOL, VC_BOOL);
+typedef const char* (VH_CALL* PFN_VH_GetHardwareOpenResultAsString)(enum VH_HardwareOpenResult);
+typedef VC_BOOL (VH_CALL* PFN_VH_CloseHardware)();
+typedef VC_BOOL(VH_CALL* PFN_VH_GetEepromInfo)(enum VH_BoardId,struct VH_EepromInfo*);
+
+#define LOAD_FCN_PTR(dll,fname) \
+    PFN_##fname fname##_fun = (PFN_##fname)GetProcAddress(dll, #fname); \
+    if (!fname##_fun) \
+        throw std::runtime_error(#fname " in libVerasonicsHal-NG could not be loaded.");
+
 initApi initVerasonicsAPI(struct apiStruct* api) {
 
-  api->hardwareOpenResult = VH_OpenHardware(FALSE);
+    api->hDLL = LoadLibrary("libVerasonicsHal-NG");
+    if (api->hDLL != NULL)
+    {
+        // Load : VH_CALL VH_OpenHardware(VC_BOOL exclusiveMode);
+        LOAD_FCN_PTR(api->hDLL, VH_OpenHardware); 
+        LOAD_FCN_PTR(api->hDLL, VH_IsHardwareReady);
+        LOAD_FCN_PTR(api->hDLL, VH_LoadFpgaRuntime);
+        LOAD_FCN_PTR(api->hDLL, VH_GetHardwareOpenResultAsString);
 
-  if(api->hardwareOpenResult == Vh_HardwareOpenResultSuccess)
-  {
-      // Attempt to place the FPGAs in their runtime state
-      if(!VH_IsHardwareReady())
-      {
-          // Attempt to open the hardware with a lock
-          api->hardwareOpenResult = VH_OpenHardware(TRUE);
-          if(api->hardwareOpenResult == Vh_HardwareOpenResultSuccess)
-          {
-              VH_LoadFpgaRuntime(FALSE, FALSE);
-              return initApi::succeed;
-          }
-      }
-      else 
-        return initApi::succeed;
+        api->hardwareOpenResult = VH_OpenHardware_fun(FALSE);
 
+        if (api->hardwareOpenResult == Vh_HardwareOpenResultSuccess)
+        {
+            // Attempt to place the FPGAs in their runtime state
+            if (!VH_IsHardwareReady_fun())
+            {
+                // Attempt to open the hardware with a lock
+                api->hardwareOpenResult = VH_OpenHardware_fun(TRUE);
+                if (api->hardwareOpenResult == Vh_HardwareOpenResultSuccess)
+                {
+                    VH_LoadFpgaRuntime_fun(FALSE, FALSE);
+                    return initApi::succeed;
+                }
+            }
+            else
+                return initApi::succeed;
+        }
+
+        api->lastError =
+            std::string(APP_NAME) +
+            " " GET_EEPROM_INFO_NAME " Error - Failed to open hardware because:\n"
+            + VH_GetHardwareOpenResultAsString_fun(api->hardwareOpenResult) + "\n";
+
+        return initApi::failed;
     }
-    
-    api->lastError = 
-        std::string(APP_NAME) + 
-        " " GET_EEPROM_INFO_NAME " Error - Failed to open hardware because:\n" 
-        + VH_GetHardwareOpenResultAsString(api->hardwareOpenResult) + "\n";
 
+    throw std::runtime_error("libVerasonicsHal-NG could not be loaded.");
     return initApi::failed;
 }
 
 
-void endVerasonicsAPI() {
+void endVerasonicsAPI(struct apiStruct* api) {
 
-  VH_CloseHardware();
+    if (api->hDLL != NULL) {
+        LOAD_FCN_PTR(api->hDLL, VH_CloseHardware);
+        VH_CloseHardware_fun();
 
+        FreeLibrary(api->hDLL);
+    }
 }
+
+const char* getMachineSN(struct apiStruct* api) {
+
+
+    if(api ==  nullptr || api->hDLL != NULL){
+        throw std::runtime_error("NO API in getMachineSN");
+        return nullptr;
+    }
+
+    struct VH_EepromInfo eepromInfoBuffer;
+    
+    LOAD_FCN_PTR(api->hDLL, VH_GetEepromInfo);
+    VC_BOOL success = VH_GetEepromInfo_fun(api->getEepromInfoParams.m_BoardId, &eepromInfoBuffer);
+    if (success){
+        api->serialNumber = eepromInfoBuffer.ei_SerialNumber;
+        return api->serialNumber.c_str(); 
+    }
+    else  {
+        throw std::runtime_error("NO success in getMachineSN");
+    }
+
+    return nullptr;
+}
+
 
 
 /*void performGetEepromInfo() {
@@ -96,7 +151,7 @@ void endVerasonicsAPI() {
     VC_BOOL isReady;
     VC_BOOL success;
     struct VH_EepromInfo eepromInfoBuffer;
-   
+
       success = VH_GetEepromInfo(g_GetEepromInfoParams.m_BoardId, &eepromInfoBuffer);
       if(success)
       {
@@ -133,7 +188,7 @@ void endVerasonicsAPI() {
                  VH_GetChipStatusAsString(eepromInfoBuffer.ei_EepromState),
                  eepromInfoBuffer.ei_BoardSpecificValue[Vh_ShiSpecificAttrConnectorStyleIndex],
                  eepromInfoBuffer.ei_BoardSpecificValue[Vh_ShiSpecificAttrConnectorCount]);
-					break;
+                    break;
                       case Vh_UTA:
                           printf("EEPROM Status:%s\n"
                                  "Connector Style Index:%u\n"
@@ -303,23 +358,3 @@ void endVerasonicsAPI() {
     }
 }*/
 
-const char* getMachineSN(struct apiStruct* api) {
-
-
-    if(api ==  nullptr){
-        throw std::runtime_error("NO API in getMachineSN");
-        return nullptr;
-    }
-
-    struct VH_EepromInfo eepromInfoBuffer;
-    VC_BOOL success = VH_GetEepromInfo(api->getEepromInfoParams.m_BoardId, &eepromInfoBuffer);
-    if (success){
-        api->serialNumber = eepromInfoBuffer.ei_SerialNumber;
-        return api->serialNumber.c_str(); 
-    }
-    else  {
-        throw std::runtime_error("NO success in getMachineSN");
-    }
-
-    return nullptr;
-}

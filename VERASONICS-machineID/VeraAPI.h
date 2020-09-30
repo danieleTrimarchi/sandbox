@@ -5,7 +5,6 @@
 extern "C" {
 #endif
 
-
 #ifdef BUILDING_EXAMPLE_DLL
 #define DLLSPEC __declspec(dllexport)
 #else
@@ -23,14 +22,13 @@ DLLSPEC struct apiStruct*  createAPIStruct();
 DLLSPEC void  deleteApiStruct(struct apiStruct*);
 
 DLLSPEC initApi initVerasonicsAPI(struct apiStruct*); 
-DLLSPEC void endVerasonicsAPI(); 
+DLLSPEC void endVerasonicsAPI(struct apiStruct*);
 
 DLLSPEC const char*  getLastError(struct apiStruct*);
 
 //DLLSPEC void  performGetEepromInfo(); 
 
 DLLSPEC const char*  getMachineSN(struct apiStruct*);
-
 
 #ifdef __cplusplus
 } // end extern "C"
