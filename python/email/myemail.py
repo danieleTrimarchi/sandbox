@@ -16,7 +16,7 @@ s.login("nasiconeus@gmail.com",input("Please enter the password"))
 msg = MIMEMultipart()
 
 msg['From'] = "nasiconeus@gmail.com"
-msg['To'] = "daniele.trimarchi@iconeus.com"
+msg['To'] = "daniele.trimarchi@iconeus.com;daniele.trimarchi@gmail.com"
 msg['Subject'] = "test email from Python"
 
 msg.attach(MIMEText("Text of the test email from Python"))

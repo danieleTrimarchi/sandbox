@@ -1,7 +1,7 @@
 from shutil import move
 import os 
 from synology_api import filestation, downloadstation
-fl = filestation.FileStation("192.168.119.24", "5000", "Daniele", "bob*DAU5turs")
+fl = filestation.FileStation("192.168.119.24", "5000", "Daniele", "Dan21Maggio82#")
 
 print(fl.get_info())
 
@@ -62,25 +62,48 @@ def delete(remote_dest_path):
 		return
 	print(fl.start_delete_task(remote_dest_path))
 	print(fl.get_delete_status(fl._delete_taskid))
-delete('/ThirdPartyPackages/testFolderFromLocal') 
+#delete('/ThirdPartyPackages/testFolderFromLocal') 
 #delete('/ThirdPartyPackages/testFileFromNAS.txt') 
 
 
 def download_file(RemoteFileAbsPath): 
-	fl.get_file(fileAbsPath,'download')
+	fl.get_file(RemoteFileAbsPath,'download')
 #download_file('/ThirdPartyPackages/testFileFromNAS.txt') 
+
+import time
+t = time.time()
+download_file('/SoftwareBuilds/Viewer_P/Release/Viewer_P_alpha-0.0_Release_embedded_e6b49f877b873ab6730529840a2c5cdb.zip')
+print("download time = ", time.time() - t)
+
 
 def download_folder(RemoteFileAbsPath, localDst): 
 
 	if not os.path.isdir(localDst) : 
 		os.mkdir(localDst)
 
-	for iFile in fl.get_file_list(fileAbsPath)['data']['files']:
+	for iFile in fl.get_file_list(RemoteFileAbsPath)['data']['files']:
 		if not(iFile['isdir']):
-			print('downloading ', fileAbsPath + '/' + iFile['name'])
-			download_file(fileAbsPath + '/' + iFile['name'])
+			print('downloading ', RemoteFileAbsPath + '/' + iFile['name'])
+			download_file(RemoteFileAbsPath + '/' + iFile['name'])
 			move(iFile['name'],localDst+"/"+iFile['name'])
 		else:
-			print('downloading folder', fileAbsPath + '/' + iFile['name'])
-			download_folder(fileAbsPath + '/' + iFile['name'], localDst + '/' + iFile['name'])
+			print('downloading folder', RemoteFileAbsPath + '/' + iFile['name'])
+			download_folder(RemoteFileAbsPath + '/' + iFile['name'], localDst + '/' + iFile['name'])
 #download_folder('/ThirdPartyPackages/testFolderFromNAS', 'testFolderFromNAS')
+
+
+def isdir(remoteDirAbsPath): 
+	return fl.get_file_list(folder_path=remoteDirAbsPath)['success']
+#print("directory /ThirdPartyPackages/HDF5 exists : ", isdir("/ThirdPartyPackages/HDF5"))
+
+def isfile(remoteFileAbsPathName): 
+	if not isdir(os.path.dirname(remoteFileAbsPathName)) :
+		return False
+
+	l = fl.get_file_list(folder_path=os.path.dirname(remoteFileAbsPathName))	
+	for iFile in l['data']['files']: 
+		if remoteFileAbsPathName == iFile['path'] :
+			return True
+	return False
+
+print("directory /ThirdPartyPackages/HDF5/README.txt exists : ", isfile("/ThirdPartyPackages/HDF5/HDFView-3.1.0-win10vs14_64/COPYING"))

@@ -288,7 +288,7 @@ public:
 	    return rootItem->columnCount();
 	};
 
-private:
+//private:
 
     void setupModelData(const QStringList &lines, TreeItem *parent) {
         QList<TreeItem*> parents;
@@ -356,17 +356,23 @@ public:
         setAlternatingRowColors(true);
 
         // Get the data 
-        const QString& data("Item1\nItemfoo2\nItem3\nItefoom4\nItem5");
+        const QString& data("Item1\n\t\tItemfoo2\n\t\tItem3\t\tItefoom4\nItem5");
 
         // Instanciate a model 
         TreeModel* srcModel = new TreeModel(data);
 
         // Instanciate a proxy model and feed it with the src model
         proxyModel = new MySortFilterProxyModel(this);
-        proxyModel->setSourceModel(srcModel); 
+        proxyModel->setDynamicSortFilter(true);
+
+        proxyModel->setSourceModel(srcModel);
 
         // Set the proxy model for this view
         setModel(proxyModel);
+
+        srcModel->setupModelData(QString("Item1a\n\t\tItemfoo2a\n\t\tItem3a\n\ttItefoom4a").split('\n'), 
+            static_cast<TreeItem*>(srcModel->index(1,0).internalPointer()) );
+
     };
 
     MySortFilterProxyModel* getProxyModel() const {

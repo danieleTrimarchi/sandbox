@@ -17,3 +17,9 @@ add_compile_definitions(${EXENAME})
 target_compile_features(${EXENAME} PUBLIC cxx_std_17)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CUDA_STANDARD 17)
+
+target_include_directories(${EXENAME} PUBLIC C:/ThirdPartyPackages/boost_1_69_0_46e5e284f2c321e7c687401f7dfe0ed5)
+#target_link_libraries(${EXENAME}  optimized )
+target_link_directories(${EXENAME} PRIVATE C:/ThirdPartyPackages/boost_1_69_0_46e5e284f2c321e7c687401f7dfe0ed5/stage/lib)
+
+

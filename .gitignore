@@ -24,6 +24,5 @@ venv
 */venv/*
 */.vs/*
 *.exe
-*.dll
 *.ilk
 

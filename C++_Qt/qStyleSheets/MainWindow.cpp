@@ -20,9 +20,9 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 	pTreeview = new TreeView(this);
 	pVLayout->addWidget(pTreeview);
 
-	// -------------------------------------------
+	// --------- item tree with dynamic filtering --------
 	pFilterWidget = new FilterWidget;
-	pFilterWidget->setText(tr("foobar|dfj"));
+	pFilterWidget->setText(tr(""));
 	connect(pFilterWidget, &FilterWidget::filterChanged, this, &MainWindow::textFilterChanged);
 
 	QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"));
@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 	hLayout->addWidget(filterPatternLabel);
 	hLayout->addWidget(pFilterWidget);
 	pVLayout->addLayout(hLayout);
-	// -------------------------------------------
+	// ---------------------------------------------------
 
 	centralWidget->setLayout(pVLayout);
 	

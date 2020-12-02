@@ -38,8 +38,8 @@ QDoubleSpinBox::up-button  { \
   width: 24px; \
 } \
 QTreeView { \
-background: #C2C3C3; \
-alternate-background-color: #8A8A8A; \
+background: #ff3356; \
+alternate-background-color: #00ffcc; \
 } \
 ");
 	
