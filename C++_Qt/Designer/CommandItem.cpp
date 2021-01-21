@@ -1,8 +1,8 @@
 #include "CommandItem.h"
 
-//CommandItem::CommandItem(const QIcon& icon, const QString& text,
-//	QListWidget* view /*= nullptr*/, int type /*= Type*/) :
-//		QListWidgetItem(icon, text, view, type) {};
+CommandItem::CommandItem(const QIcon& icon, const QString& text,
+	QListWidget* view /*= nullptr*/, int type /*= Type*/) :
+		QListWidgetItem(icon, text, view, type) {};
 
 //QVariant CommandItem::data(int role) const {
 //

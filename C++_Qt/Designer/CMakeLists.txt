@@ -14,7 +14,7 @@ endif()
 find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
 
 # add the executable
-add_executable(DesignerTest main.cpp MainWindow.cpp CommandItem.cpp DesignerTestResources.qrc )
+add_executable(DesignerTest main.cpp MainWindow.cpp CommandItem.cpp TreeItem.cpp TreeModel.cpp DesignerTestResources.qrc )
 set_target_properties( DesignerTest PROPERTIES AUTORCC ON)
 
 target_link_libraries(DesignerTest Qt5::Widgets Qt5::Core)

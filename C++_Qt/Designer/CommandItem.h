@@ -7,8 +7,8 @@ class CommandItem : public QListWidgetItem {
 
 public: 
 
-	//explicit CommandItem(const QIcon& icon, const QString& text,
-	//	QListWidget* view = nullptr, int type = Type);
+	explicit CommandItem(const QIcon& icon, const QString& text,
+		QListWidget* view = nullptr, int type = Type);
 
 	//virtual QVariant data(int role) const ;
 

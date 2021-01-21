@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'untitlednudkOr.ui'
+** Form generated from reading UI file 'untitledzDfbnq.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.12.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UNTITLEDNUDKOR_H
-#define UNTITLEDNUDKOR_H
+#ifndef UNTITLEDZDFBNQ_H
+#define UNTITLEDZDFBNQ_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -142,12 +142,17 @@ public:
         treeView->setSizePolicy(sizePolicy1);
         treeView->setMouseTracking(true);
         treeView->setAutoFillBackground(true);
+        treeView->setFrameShape(QFrame::StyledPanel);
+        treeView->setFrameShadow(QFrame::Sunken);
+        treeView->setMidLineWidth(-1);
+        treeView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
         treeView->setDragEnabled(true);
         treeView->setDragDropOverwriteMode(true);
         treeView->setDragDropMode(QAbstractItemView::DropOnly);
         treeView->setDefaultDropAction(Qt::CopyAction);
         treeView->setAlternatingRowColors(true);
         treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+        treeView->header()->setCascadingSectionResizes(false);
 
         verticalLayout_2->addWidget(treeView);
 
@@ -224,4 +229,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UNTITLEDNUDKOR_H
+#endif // UNTITLEDZDFBNQ_H
