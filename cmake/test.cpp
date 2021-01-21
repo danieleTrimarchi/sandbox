@@ -14,7 +14,7 @@ void main(int argc, char** argv){
 
 	// Get the executable path without the executable name
 	 fs::path absPath(fs::absolute(fs::path(argv[0])));
-	 std::cout << "fsPath= " << absPath << std::endl;
+	 std::cout << "fsPath2= " << absPath << std::endl;
 
 	while (true) {
 
