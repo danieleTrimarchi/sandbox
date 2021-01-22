@@ -6,7 +6,7 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    TreeModel(const QStringList& headers, const QString& data, QObject* parent=nullptr);
+    TreeModel(const QStringList& headers, QObject* parent=nullptr);
     ~TreeModel();
 
     QVariant data(const QModelIndex& index, int role) const override;
@@ -19,6 +19,9 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     TreeItem* getRoot() const; 
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
+    Qt::DropActions supportedDropActions() const override;
+    //QMimeData* mimeData(const QModelIndexList& indexes) const; 
 
 private:
 

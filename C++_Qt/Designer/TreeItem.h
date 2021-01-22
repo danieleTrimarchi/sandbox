@@ -22,6 +22,8 @@ public:
     TreeItem* parentItem();
     bool setData(int column, const QVariant& value);
 
+    TreeItem operator=(const TreeItem& rhs); 
+
 private:
     QVector<TreeItem*> m_childItems;
     QVector<QVariant> m_itemData;

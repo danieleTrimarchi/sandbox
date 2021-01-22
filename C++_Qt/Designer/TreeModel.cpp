@@ -1,6 +1,8 @@
 #include "TreeModel.h"
+#include <QIcon>
+#include <iostream>
 
-TreeModel::TreeModel(const QStringList& headers, const QString& data, QObject* parent/*=nullptr*/)
+TreeModel::TreeModel(const QStringList& headers, QObject* parent/*=nullptr*/)
     : QAbstractItemModel(parent) {
 
     QVector<QVariant> rootData;
@@ -70,25 +72,33 @@ int TreeModel::columnCount(const QModelIndex& parent) const
 
 
 QVariant TreeModel::data(const QModelIndex& index, int role) const
+
 {
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
-
     TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
 
-    return item->data(index.column());
+    if (role == Qt::DisplayRole )
+        return item->data(index.column());
+    else if (role == Qt::DecorationRole) {
+        return item->data(1);
+    }
+    else
+        return QVariant();
+
 }
 
 
 Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const
 {
-    if (!index.isValid())
-        return Qt::NoItemFlags;
+    //if (!index.isValid())
+    //    return Qt::NoItemFlags;
 
-    return QAbstractItemModel::flags(index);
+    //return QAbstractItemModel::flags(index);
+
+    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+    return  Qt::ItemIsDropEnabled | defaultFlags;
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
@@ -102,4 +112,15 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
 
 TreeItem* TreeModel::getRoot() const {
     return rootItem; 
+}
+
+bool TreeModel::dropMimeData(const QMimeData* data,
+    Qt::DropAction action, int row, int column, const QModelIndex& parent)
+{
+    std::cout << "dropMimeData!!" << std::endl;
+    return true; 
+}
+
+Qt::DropActions TreeModel::supportedDropActions() const {
+    return Qt::CopyAction | Qt::MoveAction;
 }

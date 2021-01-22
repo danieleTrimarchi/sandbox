@@ -1,8 +1,10 @@
 #include "TreeItem.h"
+#include <qicon.h>
 
 TreeItem::TreeItem(const QVector<QVariant> data, TreeItem* parent) :
     m_itemData(data), m_parentItem(parent)
-{}
+{
+}
 
 TreeItem::~TreeItem()
 {
@@ -88,4 +90,11 @@ bool TreeItem::setData(int column, const QVariant& value)
 
     m_itemData[column] = value;
     return true;
+}
+
+TreeItem TreeItem::operator=(const TreeItem& rhs) {
+    m_childItems = rhs.m_childItems;
+    m_itemData = rhs.m_itemData;
+    m_parentItem = rhs.m_parentItem;
+    return *this;
 }
