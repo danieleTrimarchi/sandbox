@@ -4,23 +4,6 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <iostream>
-#include <ui_untitled.h>
-
-//#include <QString>
-//#include <QVariant>
-//#include <QVector>
-//#include <QStringList>
-//#include <QAbstractItemModel>
-//#include <QTreeView>
-//#include <QSortFilterProxyModel>
-//#include <QLineEdit>
-//#include <QActionGroup>
-//#include <QMenu>
-//#include <QToolButton>
-//#include <QWidgetAction>
-
-
-
 
 class MainWindow : public QMainWindow {
 
@@ -36,7 +19,8 @@ public:
 
 private:
 
-	Ui_MainWindow ui;
+	QWidget* centralWidget; 
+
 
 public slots:
 

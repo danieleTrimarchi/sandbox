@@ -9,91 +9,96 @@
 #include <QSizePolicy>
 #include "TreeModel.h"
 #include "TreeView.h"
-#include "ListWidget.h"
+#include "ListWidgetView.h"
 
 MainWindow::MainWindow(QWidget* parent /*=nullptr*/) : 
 	QMainWindow(parent) {
 
-	ui.setupUi(this);
+	setObjectName(QString::fromUtf8("BatchProcessingTool"));
 
-	//todo ! 
-	// Set the vertical layout for dynamic resizing (all window width) 
-	//ui.verticalLayoutWidget.
+	this->resize(954, 808);
+	centralWidget = new QWidget(this);
+	centralWidget->setObjectName(QString::fromUtf8("centralwidget"));
+
+	QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+	sizePolicy.setHorizontalStretch(0);
+	sizePolicy.setVerticalStretch(0);
+	sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
+	centralWidget->setSizePolicy(sizePolicy);
+
+	this->setCentralWidget(centralWidget);
+
+	QWidget* horiwontalLayoutWidget = new QWidget(centralWidget);
+	horiwontalLayoutWidget->setObjectName(QString::fromUtf8("horiwontalLayoutWidget"));
+	horiwontalLayoutWidget->setGeometry(QRect(40, 30, 771, 511));
+
+	QHBoxLayout* horizontalLayout = new QHBoxLayout(horiwontalLayoutWidget);
+	horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+	horizontalLayout->setSizeConstraint(QLayout::SetMaximumSize);
+	horizontalLayout->setContentsMargins(0, 0, 0, 0);
+
+	// ------------------------------------------------------------------
+	// ------------------------------------------------------------------
+	ListWidgetView* listWidgetView = new ListWidgetView(horiwontalLayoutWidget);
 	
-	// ----------------------------------------------------------
+	horizontalLayout->addWidget(listWidgetView);
 
-	const QStringList headers({ tr("Command stack") });
-	TreeModel* treeModel = new TreeModel(headers);
+	//// ------------------------------------------------------------------
+	//// ------------------------------------------------------------------
+	////todo ! 
+	//// Set the vertical layout for dynamic resizing (all window width) 
+	////ui.verticalLayoutWidget.
+	//
+	//// ----------------------------------------------------------
 
-	QVector<QVariant> columnData;
-	columnData.reserve(2);
-	columnData << "MagnificItemName";
-	columnData << QIcon(":/icons/superLoc.png");
+	//const QStringList headers({ tr("Command stack") });
+	//TreeModel* treeModel = new TreeModel(headers);
 
-	TreeItem* root(treeModel->getRoot());
-	root->insertChildren(root->childCount(), 1, columnData.size());
-	for (int column = 0; column < columnData.size(); column++)
-		root->child(root->childCount() - 1)->setData(column, columnData[column]);
-	// ----------------------------------------------------------
-		ListWidget* listWidget = new ListWidget(ui.verticalLayoutWidget);
+	//QVector<QVariant> columnData;
+	//columnData.reserve(2);
+	//columnData << "MagnificItemName";
+	//columnData << QIcon(":/icons/superLoc.png");
 
-		new QListWidgetItem(listWidget);
-		new QListWidgetItem(listWidget);
-		QIcon icon;
-		listWidget->setObjectName(QString::fromUtf8("listWidget"));
-		QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
-		sizePolicy1.setHorizontalStretch(0);
-		sizePolicy1.setVerticalStretch(0);
-		sizePolicy1.setHeightForWidth(listWidget->sizePolicy().hasHeightForWidth());
-		listWidget->setSizePolicy(sizePolicy1);
-		listWidget->setDragEnabled(true);
-		listWidget->setDragDropOverwriteMode(true);
-		listWidget->setDragDropMode(QAbstractItemView::DragOnly);
-		const bool __sortingEnabled1 = listWidget->isSortingEnabled();
-		listWidget->setSortingEnabled(false);
+	//TreeItem* root(treeModel->getRoot());
+	//root->insertChildren(root->childCount(), 1, columnData.size());
+	//for (int column = 0; column < columnData.size(); column++)
+	//	root->child(root->childCount() - 1)->setData(column, columnData[column]);
+	//// ----------------------------------------------------------
+	//	
 
-		listWidget->addItem(new CommandItem(QIcon(":/icons/superLoc.png"), "SuperLoc"));
-		listWidget->addItem(new CommandItem(QIcon(":/icons/bandWidthDop.jpg"), "BandWidthDoppler"));
+	//// ----------------------------------------------------------
+	//TreeView* treeView = new TreeView(ui.verticalLayoutWidget);
+	//treeView->setObjectName(QString::fromUtf8("treeView"));
+	//treeView->setEnabled(true);
+	////sizePolicy1.setHeightForWidth(treeView->sizePolicy().hasHeightForWidth());
+	////treeView->setSizePolicy(sizePolicy1);
+	//treeView->setMouseTracking(true);
+	//treeView->setAutoFillBackground(true);
+	//treeView->setFrameShape(QFrame::StyledPanel);
+	//treeView->setFrameShadow(QFrame::Sunken);
+	//treeView->setMidLineWidth(-1);
+	//treeView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+	//treeView->setDragEnabled(true);
+	//treeView->setDragDropOverwriteMode(true);
+	//treeView->setDragDropMode(QAbstractItemView::DropOnly);
+	//treeView->setDefaultDropAction(Qt::CopyAction);
+	//treeView->setAlternatingRowColors(true);
+	//treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+	//treeView->header()->setCascadingSectionResizes(false);
 
-		listWidget->setViewMode(QListWidget::IconMode);
-		listWidget->setResizeMode(QListWidget::Adjust);
-		listWidget->setIconSize(QSize(100, 100));
+	//ui.verticalLayout_2->addWidget(treeView);
+	//
+	//QPushButton* pushButton_2 = new QPushButton(ui.verticalLayoutWidget);
+	//pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
+	//pushButton_2->setText(QApplication::translate("MainWindow", "Clear", nullptr));
 
-		ui.horizontalLayout_2->addWidget(listWidget);
+	//ui.verticalLayout_2->addWidget(pushButton_2);
 
-	// ----------------------------------------------------------
-	TreeView* treeView = new TreeView(ui.verticalLayoutWidget);
-	treeView->setObjectName(QString::fromUtf8("treeView"));
-	treeView->setEnabled(true);
-	//sizePolicy1.setHeightForWidth(treeView->sizePolicy().hasHeightForWidth());
-	//treeView->setSizePolicy(sizePolicy1);
-	treeView->setMouseTracking(true);
-	treeView->setAutoFillBackground(true);
-	treeView->setFrameShape(QFrame::StyledPanel);
-	treeView->setFrameShadow(QFrame::Sunken);
-	treeView->setMidLineWidth(-1);
-	treeView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	treeView->setDragEnabled(true);
-	treeView->setDragDropOverwriteMode(true);
-	treeView->setDragDropMode(QAbstractItemView::DropOnly);
-	treeView->setDefaultDropAction(Qt::CopyAction);
-	treeView->setAlternatingRowColors(true);
-	treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-	treeView->header()->setCascadingSectionResizes(false);
+	//treeView->setModel(treeModel);
 
-	ui.verticalLayout_2->addWidget(treeView);
-	
-	QPushButton* pushButton_2 = new QPushButton(ui.verticalLayoutWidget);
-	pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-	pushButton_2->setText(QApplication::translate("MainWindow", "Clear", nullptr));
+	//// ----------------------------------------------------------
 
-	ui.verticalLayout_2->addWidget(pushButton_2);
-
-	treeView->setModel(treeModel);
-
-	// ----------------------------------------------------------
-
-	QObject::connect(ui.SelectFileRoot, &QPushButton::clicked, this, &MainWindow::getExistingDirectory);
+	//QObject::connect(ui.SelectFileRoot, &QPushButton::clicked, this, &MainWindow::getExistingDirectory);
 
 }
 	
