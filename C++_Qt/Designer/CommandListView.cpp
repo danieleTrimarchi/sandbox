@@ -1,27 +1,25 @@
-#include "ListWidgetView.h"
+#include "CommandListView.h"
 #include <qmimedata.h>
 #include <QDrag>
 #include <iostream>
 #include "CommandModel.h"
 
-static inline QString ListWidgetMimeType() { return QStringLiteral("text/plain"); }
-
-ListWidgetView::ListWidgetView(QWidget* parent /*=nullptr*/) :
+CommandListView::CommandListView(QWidget* parent /*=nullptr*/) :
     QListView(parent) {
 
-    this->setObjectName(QString::fromUtf8("listWidget"));    
-    this->setViewMode(QListWidget::IconMode);
-    this->setDragEnabled(true);
-    this->setResizeMode(QListWidget::Adjust);
-    this->setIconSize(QSize(80, 80));
-    this->setGridSize(QSize(100, 200));
-    this->setSpacing(10);
-    this->setMovement(QListView::Snap);
-    this->setAcceptDrops(true);
-    this->setDropIndicatorShown(true);
+    setObjectName(QString::fromUtf8("CommandListWiew"));    
+    setViewMode(QListWidget::IconMode);
+    setDragEnabled(true);
+    setResizeMode(QListWidget::Adjust);
+    setIconSize(QSize(80, 80));
+    setGridSize(QSize(100, 200));
+    setSpacing(10);
+    setMovement(QListView::Snap);
+    setAcceptDrops(true);
+    setDropIndicatorShown(true);
 
     CommandModel* model = new CommandModel(this);
-    this->setModel(model);
+    setModel(model);
 
 //
 }

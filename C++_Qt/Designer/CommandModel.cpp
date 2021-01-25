@@ -55,6 +55,9 @@ QMimeData* CommandModel::mimeData(const QModelIndexList& indexes) const
             stream << children.at(index.row())->icon() << children.at(index.row())->text();
         }
     }
+    // todo : remove this crap that is only used for the condition in CommandTreeView::dropEvent
+    mimeData->setText(children.at(0)->text()); 
+    mimeData->setImageData(children.at(0)->icon());
 
     mimeData->setData(CommandModelMimeType(), encodedData);
     return mimeData;

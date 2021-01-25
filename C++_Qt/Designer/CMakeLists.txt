@@ -17,12 +17,12 @@ find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
 add_executable( DesignerTest 
 	main.cpp 
 	CommandItem.cpp
-	ListWidgetView.cpp
+	CommandListView.cpp
 	CommandModel.cpp
 	MainWindow.cpp  
-	TreeItem.cpp 
-	TreeModel.cpp 
-	TreeView.cpp  
+	CommandTreeItem.cpp 
+	CommandTreeModel.cpp 
+	CommandTreeView.cpp  
 	DesignerTestResources.qrc )
 
 set_target_properties( DesignerTest PROPERTIES AUTORCC ON)

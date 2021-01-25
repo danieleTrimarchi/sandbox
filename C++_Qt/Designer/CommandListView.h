@@ -1,5 +1,5 @@
-#ifndef LISTWIDGETVIEW_H
-#define LISTWIDGETVIEW_H
+#ifndef COMMANDLISTVIEW_H
+#define COMMANDLISTVIEW_H
 
 #include <QListView>
 #include <QMouseEvent>
@@ -7,10 +7,10 @@
 #include <QDropEvent>
 #include <QDragEnterEvent>
 
-class ListWidgetView : public QListView {
+class CommandListView : public QListView {
 public: 
 
-	explicit ListWidgetView(QWidget* parent = nullptr);
+	explicit CommandListView(QWidget* parent = nullptr);
 	
 protected: 
 

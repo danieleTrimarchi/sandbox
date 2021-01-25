@@ -1,26 +1,31 @@
-#include "TreeView.h"
-#include "TreeModel.h"
+#include "CommandTreeView.h"
+#include "CommandTreeModel.h"
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
 
-TreeView::TreeView(QWidget* parent /*= nullptr*/) : 
+CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) : 
 	QTreeView(parent) {
 	setAcceptDrops(true);
 	setDropIndicatorShown(true); 
 	setDragEnabled(true);
 	//setDragDropMode(QAbstractItemView::DropOnly);
+	
+	QStringList headers{ tr("Command stack") };
+
+	CommandTreeModel* model = new CommandTreeModel(headers, this);
+	setModel(model);
 
 }
 
-void TreeView::dragEnterEvent(QDragEnterEvent* event)
+void CommandTreeView::dragEnterEvent(QDragEnterEvent* event)
 {
 	if (event->mimeData()->hasText() &&
 			event->mimeData()->hasImage() )
 		event->acceptProposedAction();
 }
 
-void TreeView::dropEvent(QDropEvent* event)
+void CommandTreeView::dropEvent(QDropEvent* event)
 {
 	if (event->mimeData()->hasFormat("text/plain")) {
 		event->accept();
@@ -30,7 +35,7 @@ void TreeView::dropEvent(QDropEvent* event)
 		//item->setText(name);
 		//item->setIcon(QIcon(":/images/iString")); //set path to image
 		//addItem(item);
-		TreeItem* root(static_cast<TreeModel*>(model())->getRoot());
+		CommandTreeItem* root(static_cast<CommandTreeModel*>(model())->getRoot());
 		size_t nCols = 2;
 		root->insertChildren(root->childCount(), 1, nCols);
 

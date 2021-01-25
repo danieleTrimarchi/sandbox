@@ -3,13 +3,13 @@
 
 #include <QTreeView>
 
-class TreeView : public QTreeView
+class CommandTreeView : public QTreeView
 {
 	Q_OBJECT
 
 public:
 
-	explicit TreeView(QWidget* parent = nullptr);
+	explicit CommandTreeView(QWidget* parent = nullptr);
 
 protected:
 

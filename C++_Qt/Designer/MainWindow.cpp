@@ -7,9 +7,9 @@
 #include "CommandItem.h"
 #include <QListWidget>
 #include <QSizePolicy>
-#include "TreeModel.h"
-#include "TreeView.h"
-#include "ListWidgetView.h"
+#include "CommandListView.h"
+#include "CommandTreeView.h"
+#include "CommandTreeModel.h"
 
 MainWindow::MainWindow(QWidget* parent /*=nullptr*/) : 
 	QMainWindow(parent) {
@@ -28,23 +28,61 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 
 	this->setCentralWidget(centralWidget);
 
-	QWidget* horiwontalLayoutWidget = new QWidget(centralWidget);
-	horiwontalLayoutWidget->setObjectName(QString::fromUtf8("horiwontalLayoutWidget"));
-	horiwontalLayoutWidget->setGeometry(QRect(40, 30, 771, 511));
+	// Set the widgets and the layouts  
+	QWidget* verticalLayoutWidget = new QWidget(centralWidget);
+	verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
+	verticalLayoutWidget->setGeometry(QRect(60, 20, 681, 521));
 
-	QHBoxLayout* horizontalLayout = new QHBoxLayout(horiwontalLayoutWidget);
+	QVBoxLayout* verticalLayout = new QVBoxLayout(verticalLayoutWidget);
+	verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+	verticalLayout->setContentsMargins(0, 0, 0, 0);
+
+	QWidget* CommandLayoutWidget = new QWidget(verticalLayoutWidget);
+	CommandLayoutWidget->setObjectName(QString::fromUtf8("CommandLayoutWidget"));
+
+	QWidget* horizontalLayoutWidget = new QWidget(CommandLayoutWidget);
+	horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
+	horizontalLayoutWidget->setGeometry(QRect(0, 0, 679, 481));
+	
+	QHBoxLayout* horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
 	horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-	horizontalLayout->setSizeConstraint(QLayout::SetMaximumSize);
 	horizontalLayout->setContentsMargins(0, 0, 0, 0);
 
-	// ------------------------------------------------------------------
-	// ------------------------------------------------------------------
-	ListWidgetView* listWidgetView = new ListWidgetView(horiwontalLayoutWidget);
+	QWidget* buttonBarWidget = new QWidget(CommandLayoutWidget);
+	buttonBarWidget->setObjectName(QString::fromUtf8("buttonBarWidget"));
+	buttonBarWidget->setGeometry(QRect(590, 490, 679, 31));
+
+	QPushButton* addCommandButton = new QPushButton(buttonBarWidget);
+	addCommandButton->setObjectName(QString::fromUtf8("addCommandButton"));
+	//addCommandButton->setGeometry(QRect(0, 0, 93, 28));
+	addCommandButton->setText("Add command"); 
 	
-	horizontalLayout->addWidget(listWidgetView);
+	verticalLayout->addWidget(CommandLayoutWidget);
+
+	// ------------------------------------------------------------------
+	// Add the (source) command list widget 
+	CommandListView* commandlistView = new CommandListView(horizontalLayoutWidget);
+	horizontalLayout->addWidget(commandlistView);
+
+	// ------------------------------------------------------------------
+	// Add the (dst) command item tree widget 
+	CommandTreeView* commandTreeView = new CommandTreeView(horizontalLayoutWidget);
+	horizontalLayout->addWidget(commandTreeView);
+
+	QObject::connect(addCommandButton, &QPushButton::clicked, 
+					static_cast<CommandTreeModel*>(commandTreeView->model()), &CommandTreeModel::appendOneChild);
 
 	//// ------------------------------------------------------------------
 	//// ------------------------------------------------------------------
+	//QListWidget* commandList = new QListWidget(horizontalLayoutWidget);
+	//commandList->setObjectName(QString::fromUtf8("commandList"));
+
+	//horizontalLayout->addWidget(commandList);
+
+	//QPushButton* pushButton = new QPushButton(horizontalLayoutWidget);
+	//pushButton->setObjectName(QString::fromUtf8("addItem"));
+	//horizontalLayout->addWidget(pushButton);
+
 	////todo ! 
 	//// Set the vertical layout for dynamic resizing (all window width) 
 	////ui.verticalLayoutWidget.
@@ -98,7 +136,6 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 
 	//// ----------------------------------------------------------
 
-	//QObject::connect(ui.SelectFileRoot, &QPushButton::clicked, this, &MainWindow::getExistingDirectory);
 
 }
 	
