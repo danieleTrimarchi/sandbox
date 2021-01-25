@@ -54,10 +54,16 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 
 	QPushButton* addCommandButton = new QPushButton(buttonBarWidget);
 	addCommandButton->setObjectName(QString::fromUtf8("addCommandButton"));
-	//addCommandButton->setGeometry(QRect(0, 0, 93, 28));
+	addCommandButton->setGeometry(QRect(0, 0, 93, 28));
 	addCommandButton->setText("Add command"); 
 	
+	QPushButton* rmCommandButton = new QPushButton(buttonBarWidget);
+	rmCommandButton->setObjectName(QString::fromUtf8("rmCommandButton"));
+	rmCommandButton->setText("Remove command");
+	rmCommandButton->setGeometry(QRect(100, 0, 120, 28));
+
 	verticalLayout->addWidget(CommandLayoutWidget);
+	verticalLayout->addWidget(buttonBarWidget);
 
 	// ------------------------------------------------------------------
 	// Add the (source) command list widget 
@@ -71,6 +77,9 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 
 	QObject::connect(addCommandButton, &QPushButton::clicked, 
 					static_cast<CommandTreeModel*>(commandTreeView->model()), &CommandTreeModel::appendOneChild);
+	
+	QObject::connect(rmCommandButton, &QPushButton::clicked,
+		static_cast<CommandTreeModel*>(commandTreeView->model()), &CommandTreeModel::removeOneChild);
 
 	//// ------------------------------------------------------------------
 	//// ------------------------------------------------------------------
