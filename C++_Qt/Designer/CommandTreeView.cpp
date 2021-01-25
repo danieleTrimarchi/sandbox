@@ -11,7 +11,7 @@ CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) :
 	setDragEnabled(true);
 	//setDragDropMode(QAbstractItemView::DropOnly);
 	
-	QStringList headers{ tr("Command stack") };
+	QStringList headers{ tr("User Command Stack") };
 
 	CommandTreeModel* model = new CommandTreeModel(headers, this);
 	setModel(model);

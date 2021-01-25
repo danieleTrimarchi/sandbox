@@ -205,11 +205,27 @@ void CommandTreeModel::appendOneChild() {
     beginInsertRows(rootIdx, position, position);
 
     QVector<QVariant> rootData;
-    rootData << QString("SuperLocAnalysis");
+    rootData << QString("SuperLocAnalysis_") + QString::number(position);
     rootData << QIcon(":/icons/superLoc.png");
 
     rootItem->appendChild(new CommandTreeItem(rootData, rootItem));
 
     endInsertRows();
+
+}
+
+void CommandTreeModel::removeOneChild() {
+
+    if (!rootItem->childCount())
+        return; 
+
+    QModelIndex rootIdx;
+    int position = rowCount(rootIdx)-1;
+
+    beginRemoveRows(rootIdx, position, position);
+
+    rootItem->removeChildren(position, 1);
+    
+    endRemoveRows();
 
 }
