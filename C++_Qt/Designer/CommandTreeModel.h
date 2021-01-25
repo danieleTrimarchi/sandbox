@@ -38,6 +38,7 @@ public:
     //QMimeData* mimeData(const QModelIndexList& indexes) const; 
 
     void appendOneChild(); 
+    void removeOneChild();
 
     bool insertColumns(int position, int columns, const QModelIndex& parent); 
     bool insertRows(int position, int rows, const QModelIndex& parent); 
