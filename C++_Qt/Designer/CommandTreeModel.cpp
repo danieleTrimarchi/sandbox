@@ -25,7 +25,7 @@ QModelIndex CommandTreeModel::index(int row, int column, const QModelIndex& pare
     CommandTreeItem* parentItem;
 
     if (!parent.isValid())
-        parentItem = getRoot();
+        parentItem = rootItem;
     else
         parentItem = static_cast<CommandTreeItem*>(parent.internalPointer());
 
@@ -38,7 +38,7 @@ QModelIndex CommandTreeModel::index(int row, int column, const QModelIndex& pare
 bool CommandTreeModel::insertColumns(int position, int columns, const QModelIndex& parent)
 {
     beginInsertColumns(parent, position, position + columns - 1);
-    const bool success = getRoot()->insertColumns(position, columns);
+    const bool success = rootItem->insertColumns(position, columns);
     endInsertColumns();
 
     return success;
@@ -53,7 +53,7 @@ bool CommandTreeModel::insertRows(int position, int rows, const QModelIndex& par
     beginInsertRows(parent, position, position + rows - 1);
     const bool success = parentItem->insertChildren(position,
         rows,
-        getRoot()->columnCount());
+        rootItem->columnCount());
     endInsertRows();
 
     return success;
@@ -67,7 +67,7 @@ QModelIndex CommandTreeModel::parent(const QModelIndex& index) const
     CommandTreeItem* childItem = getItem(index);;
     CommandTreeItem* parentItem = childItem ? childItem->parent() : nullptr;
 
-    if (parentItem == getRoot() || !parentItem)
+    if (parentItem == rootItem || !parentItem)
         return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
@@ -76,10 +76,10 @@ QModelIndex CommandTreeModel::parent(const QModelIndex& index) const
 bool CommandTreeModel::removeColumns(int position, int columns, const QModelIndex& parent)
 {
     beginRemoveColumns(parent, position, position + columns - 1);
-    const bool success = getRoot()->removeColumns(position, columns);
+    const bool success = rootItem->removeColumns(position, columns);
     endRemoveColumns();
 
-    if (getRoot()->columnCount() == 0)
+    if (rootItem->columnCount() == 0)
         removeRows(0, rowCount(),parent);
 
     return success;
@@ -105,7 +105,7 @@ int CommandTreeModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if (!parent.isValid())
-        parentItem = getRoot();
+        parentItem = rootItem;
     else
         parentItem = static_cast<CommandTreeItem*>(parent.internalPointer());
 
@@ -116,7 +116,7 @@ int CommandTreeModel::columnCount(const QModelIndex& parent) const
 {
     if (parent.isValid())
         return static_cast<CommandTreeItem*>(parent.internalPointer())->columnCount();
-    return getRoot()->columnCount();
+    return rootItem->columnCount();
 }
 
 CommandTreeItem* CommandTreeModel::getItem(const QModelIndex& index) const
@@ -126,7 +126,7 @@ CommandTreeItem* CommandTreeModel::getItem(const QModelIndex& index) const
         if (item)
             return item;
     }
-    return getRoot();
+    return rootItem;
 }
 
 bool CommandTreeModel::setData(const QModelIndex& index, const QVariant& value, int role)
@@ -163,6 +163,11 @@ QVariant CommandTreeModel::data(const QModelIndex& index, int role) const
 
 Qt::ItemFlags CommandTreeModel::flags(const QModelIndex& index) const
 {
+    //if (!index.isValid())
+    //    return Qt::NoItemFlags;
+
+    //return QAbstractItemModel::flags(index);
+
     Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
     return Qt::ItemIsEditable | Qt::ItemIsDropEnabled | defaultFlags;
 }
@@ -171,13 +176,13 @@ QVariant CommandTreeModel::headerData(int section, Qt::Orientation orientation,
     int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return getRoot()->data(section);
+        return rootItem->data(section);
 
     return QVariant();
 }
 
 CommandTreeItem* CommandTreeModel::getRoot() const {
-    return rootItem;
+    return rootItem; 
 }
 
 bool CommandTreeModel::dropMimeData(const QMimeData* data,
@@ -203,7 +208,7 @@ void CommandTreeModel::appendOneChild() {
     rootData << QString("SuperLocAnalysis_") + QString::number(position);
     rootData << QIcon(":/icons/superLoc.png");
 
-    getRoot()->appendChild(new CommandTreeItem(rootData, getRoot()));
+    rootItem->appendChild(new CommandTreeItem(rootData, rootItem));
 
     endInsertRows();
 
@@ -211,7 +216,7 @@ void CommandTreeModel::appendOneChild() {
 
 void CommandTreeModel::removeOneChild() {
 
-    if (!getRoot()->childCount())
+    if (!rootItem->childCount())
         return; 
 
     QModelIndex rootIdx;
@@ -219,7 +224,7 @@ void CommandTreeModel::removeOneChild() {
 
     beginRemoveRows(rootIdx, position, position);
 
-    getRoot()->removeChildren(position, 1);
+    rootItem->removeChildren(position, 1);
     
     endRemoveRows();
 
