@@ -4,8 +4,6 @@
 #include <QMimeData>
 #include <QRandomGenerator>
 
-static inline QString CommandModelMimeType() { return QStringLiteral("command/command_type"); }
-
 CommandModel::CommandModel(QObject* parent) :
     QAbstractListModel(parent) {
 

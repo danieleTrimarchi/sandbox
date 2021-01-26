@@ -50,6 +50,8 @@ bool CommandTreeModel::insertRows(int position, int rows, const QModelIndex& par
     if (!parentItem)
         return false;
 
+    int colCnt = rootItem->columnCount(); 
+
     beginInsertRows(parent, position, position + rows - 1);
     const bool success = parentItem->insertChildren(position,
         rows,
@@ -133,6 +135,9 @@ bool CommandTreeModel::setData(const QModelIndex& index, const QVariant& value, 
 {
     if (role != Qt::EditRole)
         return false;
+
+    if (!index.isValid())
+        return false; 
 
     CommandTreeItem* item = getItem(index);
     bool result = item->setData(index.column(), value);

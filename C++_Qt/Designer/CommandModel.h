@@ -24,6 +24,8 @@ public:
     int rowCount(const QModelIndex& parent) const override;
     Qt::DropActions supportedDropActions() const override;
 
+    static inline QString CommandModelMimeType() { return QStringLiteral("command/command_type"); }
+
 private:
     QVector<CommandItem*> children;
 
