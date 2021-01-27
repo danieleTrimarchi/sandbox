@@ -1,18 +1,29 @@
 #include <QString>
 #include <QVariant>
 #include <QVector>
+#include <QIcon>
 
-class CommandTreeItem
-{
+namespace CTI {
+
+    enum colContent {
+        icon,
+        name,
+        size
+    };
+
+}
+
+class CommandTreeItem {
+
 public:
-    explicit CommandTreeItem(const QVector<QVariant> data, CommandTreeItem* =nullptr );
+    explicit CommandTreeItem(const std::string name, const QIcon icon, CommandTreeItem* parent =nullptr );
 
     ~CommandTreeItem();
 
     void appendChild(CommandTreeItem* child);
 
-    bool insertChildren(int position, int count, int columns);
-    bool insertColumns(int position, int columns);
+    //bool insertChildren(int position, int count, int columns);
+    //bool insertColumns(int position, int columns);
 
     CommandTreeItem* child(int row);
 
@@ -21,20 +32,20 @@ public:
 
     QVariant data(int column) const;
 
-    int row() const;
-
     CommandTreeItem* parent() const;
     int childNumber() const;
 
-    bool setData(int column, const QVariant& value);
+    bool setData(int column, const QVariant value);
 
-    bool removeColumns(int position, int columns);
+    //bool removeColumns(int position, int columns);
     bool removeChildren(int position, int count);
 
     CommandTreeItem operator=(const CommandTreeItem& rhs); 
 
 private:
-    QVector<CommandTreeItem*> m_childItems;
-    QVector<QVariant> m_itemData;
-    CommandTreeItem* m_parentItem;
+
+    std::string name_; 
+    QIcon icon_; 
+    CommandTreeItem* parent_;
+    QVector<CommandTreeItem*> children_;
 };

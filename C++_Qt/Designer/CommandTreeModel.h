@@ -38,12 +38,12 @@ public:
     //QMimeData* mimeData(const QModelIndexList& indexes) const; 
 
     void appendOneChild();
-    void removeOneChild();
 
-    bool insertColumns(int position, int columns, const QModelIndex& parent); 
-    bool insertRows(int position, int rows, int nCols, const QModelIndex& parent); 
-    bool removeColumns(int position, int columns, const QModelIndex& parent); 
-    bool removeRows(int position, int rows, const QModelIndex& parent); 
+//    bool insertColumns(int position, int columns, const QModelIndex& parent); 
+    //bool insertRows(int position, int rows, int nCols, const QModelIndex& parent); 
+  /*  bool removeColumns(int position, int columns, const QModelIndex& parent); 
+    bool removeRows(int position, int rows, const QModelIndex& parent); */
+    bool removeItem(const QModelIndex& parent); 
 
 private:
 

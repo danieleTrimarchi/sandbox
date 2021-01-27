@@ -4,6 +4,7 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <iostream>
+#include <QMenu>
 
 CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) : 
 	QTreeView(parent) {
@@ -15,7 +16,29 @@ CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) :
 	CommandTreeModel* model = new CommandTreeModel(this);
 	setModel(model);
 
+	setContextMenuPolicy(Qt::CustomContextMenu); //  ActionsContextMenu);
+
+	//connect(removeItemAction_, SIGNAL(triggered()), this, SLOT(removeOneItem()));
+
+	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomContextMenu(const QPoint&)));
 }
+
+void CommandTreeView::onCustomContextMenu(const QPoint& point) {
+
+	CommandTreeModel* pModel = static_cast<CommandTreeModel*>(model());
+	CommandTreeItem* pItem = pModel->getItem(indexAt(point)); 
+	std::cout << pItem->data(CTI::colContent::name).toString().toStdString() <<std::endl;
+
+	QPoint globalPos = mapToGlobal(point);
+	QMenu contextMenu_;
+	QAction* removeItemAction_ = new QAction("Delete...", &contextMenu_);
+	contextMenu_.addAction(removeItemAction_);
+	contextMenu_.exec(globalPos);
+
+	std::cout << "And now can proceed with item removal... " << std::endl;
+	pModel->removeItem(indexAt(point));
+}
+
 
 void CommandTreeView::dragEnterEvent(QDragEnterEvent* event)
 {
@@ -76,13 +99,13 @@ void CommandTreeView::dropEvent(QDropEvent* event)
 				break;
 			case QAbstractItemView::OnItem:
 
-				std::cout << "On item" << std::endl; 
 				cmdModel = static_cast<CommandTreeModel*>(model()); 
 				item = cmdModel->getItem(dropIndex);
+				std::cout << "On item " << item->data(CTI::colContent::name).toString().toStdString() << std::endl;
 
-				cmdModel->insertRows(0,1,2,dropIndex); 
-				item->child(0)->setData(0, QString("DroppedItem_") + item->data(0).toString());
-				item->child(0)->setData(1, QIcon(":/icons/drop.png"));
+				item->appendChild(
+					new CommandTreeItem("DroppedItem_" + item->data(CTI::colContent::name).toString().toStdString(),
+										QIcon(":/icons/drop.png"), item));
 				emit cmdModel->dataChanged(dropIndex, dropIndex, { Qt::DisplayRole, Qt::EditRole });
 
 				//cmdModel->setData(

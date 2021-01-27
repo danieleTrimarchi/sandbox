@@ -3,5 +3,6 @@
     <file>icons/superLoc.png</file>
     <file>icons/bandWidthDop.jpg</file>
     <file>icons/drop.png</file>
+    <file>icons/analysisTreeRoot.png</file>
 </qresource>
 </RCC>
