@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>icons/superLoc.png</file>
-  <file>icons/bandWidthDop.jpg</file>
+    <file>icons/bandWidthDop.jpg</file>
+    <file>icons/drop.png</file>
 </qresource>
 </RCC>

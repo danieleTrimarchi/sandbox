@@ -6,7 +6,7 @@ class CommandTreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    CommandTreeModel(const QStringList& headers, QObject* parent=nullptr);
+    CommandTreeModel(QObject* parent=nullptr);
     ~CommandTreeModel();
 
     CommandTreeItem* getItem(const QModelIndex& index) const; 
@@ -41,7 +41,7 @@ public:
     void removeOneChild();
 
     bool insertColumns(int position, int columns, const QModelIndex& parent); 
-    bool insertRows(int position, int rows, const QModelIndex& parent); 
+    bool insertRows(int position, int rows, int nCols, const QModelIndex& parent); 
     bool removeColumns(int position, int columns, const QModelIndex& parent); 
     bool removeRows(int position, int rows, const QModelIndex& parent); 
 

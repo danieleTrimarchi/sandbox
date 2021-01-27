@@ -2,12 +2,11 @@
 #include <QIcon>
 #include <iostream>
 
-CommandTreeModel::CommandTreeModel(const QStringList& headers, QObject* parent/*=nullptr*/)
+CommandTreeModel::CommandTreeModel( QObject* parent/*=nullptr*/)
     : QAbstractItemModel(parent) {
 
     QVector<QVariant> rootData;
-    for (const QString& header : headers)
-        rootData << header;
+    rootData << tr("Command stack");
 
     rootItem = new CommandTreeItem(rootData);
 }
@@ -44,7 +43,7 @@ bool CommandTreeModel::insertColumns(int position, int columns, const QModelInde
     return success;
 }
 
-bool CommandTreeModel::insertRows(int position, int rows, const QModelIndex& parent)
+bool CommandTreeModel::insertRows(int position, int rows, int nCols, const QModelIndex& parent)
 {
     CommandTreeItem* parentItem = getItem(parent);
     if (!parentItem)
@@ -55,7 +54,7 @@ bool CommandTreeModel::insertRows(int position, int rows, const QModelIndex& par
     beginInsertRows(parent, position, position + rows - 1);
     const bool success = parentItem->insertChildren(position,
         rows,
-        rootItem->columnCount());
+        nCols);
     endInsertRows();
 
     return success;

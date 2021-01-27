@@ -12,9 +12,7 @@ CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) :
 	setDragEnabled(true);
 	setDragDropMode(QAbstractItemView::DropOnly);
 	
-	QStringList headers{ tr("User Command Stack") };
-
-	CommandTreeModel* model = new CommandTreeModel(headers, this);
+	CommandTreeModel* model = new CommandTreeModel(this);
 	setModel(model);
 
 }
@@ -82,13 +80,15 @@ void CommandTreeView::dropEvent(QDropEvent* event)
 				cmdModel = static_cast<CommandTreeModel*>(model()); 
 				item = cmdModel->getItem(dropIndex);
 
-				cmdModel->insertRows(0, 1, dropIndex); 
-				cmdModel->setData(
-					cmdModel->index(0,0,dropIndex),
-					QString("DroppedItem"), Qt::EditRole
-				);
-				//cmdModel->setData(dropIndex.child(0,0), QIcon(":/icons/drop.png"), Qt::EditRole);
+				cmdModel->insertRows(0,1,2,dropIndex); 
+				item->child(0)->setData(0, QString("DroppedItem_") + item->data(0).toString());
+				item->child(0)->setData(1, QIcon(":/icons/drop.png"));
+				emit cmdModel->dataChanged(dropIndex, dropIndex, { Qt::DisplayRole, Qt::EditRole });
 
+				//cmdModel->setData(
+				//	cmdModel->index(0,0,dropIndex),
+				//	QString("DroppedItem"), Qt::EditRole
+				//);
 
 //				item->appendChild(new CommandTreeItem(rootData, item)); 
 

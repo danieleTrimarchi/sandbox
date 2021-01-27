@@ -69,7 +69,7 @@ int CommandTreeItem::row() const
 
 int CommandTreeItem::columnCount() const
 {
-    return 1;
+    return m_itemData.size();
 }
 
 CommandTreeItem* CommandTreeItem::parent() const {
