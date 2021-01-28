@@ -23,6 +23,7 @@ add_executable( DesignerTest
 	CommandTreeItem.cpp 
 	CommandTreeModel.cpp 
 	CommandTreeView.cpp  
+	Actions.cpp
 	DesignerTestResources.qrc )
 
 set_target_properties( DesignerTest PROPERTIES AUTORCC ON)

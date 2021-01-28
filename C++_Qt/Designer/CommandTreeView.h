@@ -4,6 +4,8 @@
 #include <QTreeView>
 #include "CommandModel.h"
 
+class CommandTreeItem; 
+
 class CommandTreeView : public QTreeView
 {
 	Q_OBJECT
@@ -24,8 +26,8 @@ protected:
 //	void mousePressEvent(QMouseEvent* event) override;
 //	void paintEvent(QPaintEvent* event) override;
 
-
 private slots:
+
 	void onCustomContextMenu(const QPoint&);
 
 };

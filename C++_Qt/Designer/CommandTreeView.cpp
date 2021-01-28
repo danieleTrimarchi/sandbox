@@ -5,6 +5,7 @@
 #include <QMimeData>
 #include <iostream>
 #include <QMenu>
+#include "Actions.h"
 
 CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) : 
 	QTreeView(parent) {
@@ -16,9 +17,9 @@ CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) :
 	CommandTreeModel* model = new CommandTreeModel(this);
 	setModel(model);
 
-	setContextMenuPolicy(Qt::CustomContextMenu); //  ActionsContextMenu);
+	setWindowTitle(QObject::tr("Command Tree"));
 
-	//connect(removeItemAction_, SIGNAL(triggered()), this, SLOT(removeOneItem()));
+	setContextMenuPolicy(Qt::CustomContextMenu); //  ActionsContextMenu);
 
 	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomContextMenu(const QPoint&)));
 }
@@ -26,19 +27,17 @@ CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) :
 void CommandTreeView::onCustomContextMenu(const QPoint& point) {
 
 	CommandTreeModel* pModel = static_cast<CommandTreeModel*>(model());
-	CommandTreeItem* pItem = pModel->getItem(indexAt(point)); 
-	std::cout << pItem->data(CTI::colContent::name).toString().toStdString() <<std::endl;
+	CommandTreeItemBase* pItem = pModel->getItem(indexAt(point));
+	std::cout << pItem->getName() <<std::endl;
 
 	QPoint globalPos = mapToGlobal(point);
 	QMenu contextMenu_;
-	QAction* removeItemAction_ = new QAction("Delete...", &contextMenu_);
+	RemoveItemAction* removeItemAction_ = new RemoveItemAction(pModel, indexAt(point), &contextMenu_);
 	contextMenu_.addAction(removeItemAction_);
 	contextMenu_.exec(globalPos);
-
 	std::cout << "And now can proceed with item removal... " << std::endl;
-	pModel->removeItem(indexAt(point));
+	
 }
-
 
 void CommandTreeView::dragEnterEvent(QDragEnterEvent* event)
 {
@@ -81,13 +80,15 @@ void CommandTreeView::dropEvent(QDropEvent* event)
 		event->setDropAction(Qt::CopyAction);
 
 		// from: https://stackoverflow.com/questions/37524292/get-the-position-of-a-drop-relative-to-an-item-on-a-qtreewidget
-		QModelIndex dropIndex = indexAt(event->pos());
+		QModelIndex parentIndex = indexAt(event->pos());
 		DropIndicatorPosition dropIndicator = dropIndicatorPosition();
 		QVector<QVariant> rootData;
-		CommandTreeItem* item; 
+		CommandTreeItemBase* parentItem;
 		CommandTreeModel* cmdModel; 
 
-		if (!dropIndex.parent().isValid() && dropIndex.row() != -1)
+		std::cout << "parentIndex is valid: " << parentIndex.isValid() <<
+			"  row: " << parentIndex.row() << "  col: " << parentIndex.column() << std::endl;
+		if (parentIndex.isValid() ) // && parentIndex.row() != -1)
 		{
 			switch (dropIndicator)
 			{
@@ -100,14 +101,20 @@ void CommandTreeView::dropEvent(QDropEvent* event)
 			case QAbstractItemView::OnItem:
 
 				cmdModel = static_cast<CommandTreeModel*>(model()); 
-				item = cmdModel->getItem(dropIndex);
-				std::cout << "On item " << item->data(CTI::colContent::name).toString().toStdString() << std::endl;
+				parentItem = cmdModel->getItem(parentIndex);
+				std::cout << "On parent item " << parentItem->getName() << std::endl;
+				std::cout << "     childcount= "<< parentItem->childCount() << std::endl;
+				cmdModel->beginInsertRows(parentIndex, 0, 1);
 
-				item->appendChild(
-					new CommandTreeItem("DroppedItem_" + item->data(CTI::colContent::name).toString().toStdString(),
-										QIcon(":/icons/drop.png"), item));
-				emit cmdModel->dataChanged(dropIndex, dropIndex, { Qt::DisplayRole, Qt::EditRole });
+				parentItem->appendChild(
+					new CommandTreeItem("DroppedItem_" + std::to_string(parentItem->childCount()) + std::string("_") + event->mimeData()->text().toStdString(),
+						event->mimeData()->imageData().value<QIcon>(), parentItem));
+				cmdModel->endInsertRows();
 
+				//emit cmdModel->dataChanged(parentIndex, parentIndex, { Qt::DisplayRole, Qt::EditRole });
+
+//				expand(parentIndex);
+				expandAll();
 				//cmdModel->setData(
 				//	cmdModel->index(0,0,dropIndex),
 				//	QString("DroppedItem"), Qt::EditRole

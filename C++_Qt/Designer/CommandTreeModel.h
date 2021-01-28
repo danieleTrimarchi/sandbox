@@ -1,15 +1,17 @@
 #include "CommandTreeItem.h"
 #include <QAbstractItemModel>
 
+class CommandTreeView;
+
 class CommandTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    CommandTreeModel(QObject* parent=nullptr);
+    CommandTreeModel(CommandTreeView* parent=nullptr);
     ~CommandTreeModel();
 
-    CommandTreeItem* getItem(const QModelIndex& index) const; 
+    CommandTreeItemBase* getItem(const QModelIndex& index) const; 
 
     bool setData(const QModelIndex& index, const QVariant& value, int role); 
         
@@ -29,9 +31,8 @@ public:
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    CommandTreeItem* getRoot() const; 
-
-    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
+    // Returns the 'fake' root, or the visible root item 
+    CommandTreeItemBase* getRoot() const;
 
     Qt::DropActions supportedDropActions() const override;
 
@@ -45,8 +46,13 @@ public:
     bool removeRows(int position, int rows, const QModelIndex& parent); */
     bool removeItem(const QModelIndex& parent); 
 
+    // todo : this is crap, I add this because of CommandTreeView::dropEvent(QDropEvent* event)
+    // to be entirely refactored ! 
+    void beginInsertRows(const QModelIndex& parent, int first, int last);
+    void endInsertRows();
+
 private:
 
-    CommandTreeItem* rootItem;
+    CommandTreeItemRoot* rootItem_;
 
 };
