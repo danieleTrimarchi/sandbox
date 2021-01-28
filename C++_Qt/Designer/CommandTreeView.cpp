@@ -20,7 +20,7 @@ CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) :
 	setWindowTitle(QObject::tr("Command Tree"));
 
 	setContextMenuPolicy(Qt::CustomContextMenu); //  ActionsContextMenu);
-
+	setEditTriggers(EditTrigger::NoEditTriggers);
 	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomContextMenu(const QPoint&)));
 }
 
