@@ -12,7 +12,7 @@ CommandListView::CommandListView(QWidget* parent /*=nullptr*/) :
     setDragEnabled(true);
     setResizeMode(QListWidget::Adjust);
     setIconSize(QSize(80, 80));
-    setGridSize(QSize(100, 200));
+    setGridSize(QSize(100, 100));
     setSpacing(10);
     setMovement(QListView::Snap);
     setAcceptDrops(true);

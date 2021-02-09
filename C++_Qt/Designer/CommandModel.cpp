@@ -8,10 +8,11 @@
 CommandModel::CommandModel(QObject* parent) :
     QAbstractListModel(parent) {
 
+    children.append(new CommandItem(QIcon(":/icons/multiIQFolder.jpg"), "ScanSelect"));
+    children.append(new CommandItem(QIcon(":/icons/multiScanFolder.jpg"), "IQSelect"));
     children.append(new CommandItem(QIcon(":/icons/superLoc.png"), "SuperLoc"));
     children.append(new CommandItem(QIcon(":/icons/bandWidthDop.jpg"), "BandWidthDoppler"));
-    children.append(new CommandItem(QIcon(":/icons/drop.png"), "Drop"));
-    children.append(new CommandItem(QIcon(":/icons/analysisTreeRoot.png"), "Root"));
+    children.append(new CommandItem(QIcon(":/icons/registration.png"), "Registration"));
 
 }
 

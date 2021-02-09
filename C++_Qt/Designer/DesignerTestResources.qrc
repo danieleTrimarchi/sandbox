@@ -2,7 +2,8 @@
 <qresource>
     <file>icons/superLoc.png</file>
     <file>icons/bandWidthDop.jpg</file>
-    <file>icons/drop.png</file>
-    <file>icons/analysisTreeRoot.png</file>
+    <file>icons/multiIQFolder.jpg</file>
+    <file>icons/multiScanFolder.jpg</file>
+  <file>icons/registration.png</file>
 </qresource>
 </RCC>
