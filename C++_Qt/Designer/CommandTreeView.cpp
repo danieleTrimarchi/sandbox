@@ -21,7 +21,9 @@ CommandTreeView::CommandTreeView(QWidget* parent /*= nullptr*/) :
 
 	setContextMenuPolicy(Qt::CustomContextMenu); //  ActionsContextMenu);
 	setEditTriggers(EditTrigger::NoEditTriggers);
+
 	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomContextMenu(const QPoint&)));
+
 }
 
 void CommandTreeView::onCustomContextMenu(const QPoint& point) {
@@ -37,6 +39,15 @@ void CommandTreeView::onCustomContextMenu(const QPoint& point) {
 	contextMenu_.exec(globalPos);
 	std::cout << "And now can proceed with item removal... " << std::endl;
 	
+}
+
+void CommandTreeView::mouseDoubleClickEvent(QMouseEvent* mouseEvent) {
+	std::cout << "Item double clicked! " << std::endl;
+	QModelIndex itemIndex = indexAt(mouseEvent->pos()); 
+	if (itemIndex.isValid()) {
+		std::cout << "  On item : " << static_cast<CommandTreeModel*>(model())->getItem(itemIndex)->getName() << std::endl;
+		// generate a property window 
+	}
 }
 
 void CommandTreeView::dragEnterEvent(QDragEnterEvent* event)

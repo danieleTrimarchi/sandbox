@@ -27,46 +27,30 @@ MainWindow::MainWindow(QWidget* parent /*=nullptr*/) :
 	centralWidget->setSizePolicy(sizePolicy);
 
 	this->setCentralWidget(centralWidget);
-
-	// Set the widgets and the layouts  
-	QWidget* verticalLayoutWidget = new QWidget(centralWidget);
-	verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
-	verticalLayoutWidget->setGeometry(QRect(60, 20, 681, 521));
-
-	QVBoxLayout* verticalLayout = new QVBoxLayout(verticalLayoutWidget);
+  
+	QVBoxLayout* verticalLayout = new QVBoxLayout(centralWidget);
 	verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
 	verticalLayout->setContentsMargins(0, 0, 0, 0);
-
-	QWidget* CommandLayoutWidget = new QWidget(verticalLayoutWidget);
-	CommandLayoutWidget->setObjectName(QString::fromUtf8("CommandLayoutWidget"));
-
-	QWidget* horizontalLayoutWidget = new QWidget(CommandLayoutWidget);
-	horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
-	horizontalLayoutWidget->setGeometry(QRect(0, 0, 679, 481));
 	
+	QPushButton* addCommandButton = new QPushButton(centralWidget);
+	addCommandButton->setObjectName(QString::fromUtf8("addCommandButton"));
+	addCommandButton->setGeometry(QRect(0, 0, 40, 28));
+	addCommandButton->setText("Add command"); 
+	verticalLayout->addWidget(addCommandButton);
+
+	QWidget* horizontalLayoutWidget = new QWidget(centralWidget);
+	horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
+	////horizontalLayoutWidget->setGeometry(QRect(0, 0, 679, 481));
+	verticalLayout->addWidget(horizontalLayoutWidget);
+
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
 	horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
 	horizontalLayout->setContentsMargins(0, 0, 0, 0);
+	horizontalLayoutWidget->setLayout(horizontalLayout); 
 
-	QWidget* buttonBarWidget = new QWidget(CommandLayoutWidget);
-	buttonBarWidget->setObjectName(QString::fromUtf8("buttonBarWidget"));
-	buttonBarWidget->setGeometry(QRect(590, 490, 679, 31));
-
-	QPushButton* addCommandButton = new QPushButton(buttonBarWidget);
-	addCommandButton->setObjectName(QString::fromUtf8("addCommandButton"));
-	addCommandButton->setGeometry(QRect(0, 0, 93, 28));
-	addCommandButton->setText("Add command"); 
-	
-	verticalLayout->addWidget(CommandLayoutWidget);
-	verticalLayout->addWidget(buttonBarWidget);
-
-	// ------------------------------------------------------------------
-	// Add the (source) command list widget 
 	CommandListView* commandlistView = new CommandListView(horizontalLayoutWidget);
 	horizontalLayout->addWidget(commandlistView);
 
-	// ------------------------------------------------------------------
-	// Add the (dst) command item tree widget 
 	CommandTreeView* commandTreeView = new CommandTreeView(horizontalLayoutWidget);
 	horizontalLayout->addWidget(commandTreeView);
 

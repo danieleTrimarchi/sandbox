@@ -7,7 +7,7 @@ CommandTreeModel::CommandTreeModel(CommandTreeView* view/*=nullptr*/)
     : QAbstractItemModel(view) {
 
     rootItem_ = new CommandTreeItemRoot();
-    rootItem_->appendChild(new CommandTreeItem("Cmd stack", QIcon(":/icons/analysisTreeRoot.png"), rootItem_));
+    rootItem_->appendChild(new CommandTreeItem("Analysis stack root", QIcon(":/icons/analysisTreeRoot.png"), rootItem_));
 }
 
 CommandTreeModel::~CommandTreeModel()
@@ -204,8 +204,8 @@ Qt::ItemFlags CommandTreeModel::flags(const QModelIndex& index) const
 QVariant CommandTreeModel::headerData(int section, Qt::Orientation orientation,
     int role) const
 {
-    //if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-    //    return rootItem_->data(section);
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+        return QString("Command stack");
 
     return QVariant();
 }

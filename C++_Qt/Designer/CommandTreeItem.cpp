@@ -107,7 +107,6 @@ CommandTreeItem::CommandTreeItem(
     const std::string name, const QIcon icon, CommandTreeItemBase* parent /*=nullptr*/) :
     CommandTreeItemBase(name, icon),
     parent_(parent) {    
-    std::cout << "creating item : " << name_ << std::endl;
 }
 
 CommandTreeItem::~CommandTreeItem()
