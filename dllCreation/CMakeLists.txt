@@ -14,7 +14,7 @@ add_library(IconeusLicensingDLL SHARED
             Keylok.cpp
             )
 
-target_include_directories(IconeusLicensingDLL PUBLIC 
+target_include_directories(IconeusLicensingDLL PRIVATE 
     C:/ThirdPartyPackages/boost_1_69_0_46e5e284f2c321e7c687401f7dfe0ed5
     C:/ThirdPartyPackages/KeyLock_cce909dc02729857df1c408401492288/Include
 )
@@ -24,25 +24,26 @@ target_link_directories(IconeusLicensingDLL PRIVATE
      C:/ThirdPartyPackages/KeyLock_cce909dc02729857df1c408401492288/lib
 )
 
-target_link_libraries(IconeusLicensingDLL
+target_link_libraries(IconeusLicensingDLL PRIVATE
     kfunc64MT
 )
 
 # ----
 
 # Create the main exe
-#add_executable(IconeusLicensingEXE  "main.cpp" )
-#
-#add_compile_options(/EHsc /MD)
-#add_definitions(-D_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH)
-#
-#target_include_directories(IconeusLicensingEXE PRIVATE 
-#    C:/ThirdPartyPackages/KeyLock_cce909dc02729857df1c408401492288/Include
-#)
+add_executable(IconeusLicensingEXE  "main.cpp" )
 
-#target_link_libraries(IconeusLicensingEXE
-#    IconeusLicensingDLL
-#)
+target_include_directories(IconeusLicensingEXE PRIVATE 
+    C:/ThirdPartyPackages/KeyLock_cce909dc02729857df1c408401492288/Include
+)
+
+target_link_directories(IconeusLicensingEXE PRIVATE 
+     C:/ThirdPartyPackages/KeyLock_cce909dc02729857df1c408401492288/lib
+)
+
+target_link_libraries(IconeusLicensingEXE PRIVATE
+    IconeusLicensingDLL
+)
 
 # QUESTION : why shall I add the boost lib path, while this is already   
 #            contained into IconeusLicensingAPI ? 
